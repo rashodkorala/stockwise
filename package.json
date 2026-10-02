@@ -27,6 +27,7 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@next/env": "14.2.10",
     "@types/d3-hierarchy": "^3.1.7",
     "@types/node": "^20.19.43",
     "@types/papaparse": "^5.5.2",

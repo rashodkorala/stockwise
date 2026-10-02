@@ -112,7 +112,14 @@ describe("Vanguard Canada", () => {
   });
 });
 
-// Runs only when MASSIVE_API_KEY is set (free plan: prices and company details; ETF Global and currencies fall back).
+// Runs only when MASSIVE_API_KEY is set, in the environment or .env.local
+// (free plan: prices and company details; ETF Global and currencies fall back).
+describe.runIf(!process.env.MASSIVE_API_KEY)("Massive (no key)", () => {
+  it("is skipped because MASSIVE_API_KEY is not set", () => {
+    console.log("Massive: MASSIVE_API_KEY not set (environment or .env.local), skipping Massive checks");
+  });
+});
+
 describe.skipIf(!process.env.MASSIVE_API_KEY)("Massive", () => {
   it("prices US tickers from Massive with a trading date", async () => {
     const q = await getQuote("AAPL", "US");
