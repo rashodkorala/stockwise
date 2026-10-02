@@ -1,31 +1,45 @@
 {
-  "name": "aws-amplify-gen2",
+  "name": "stockwise",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "dev": "next dev",
+    "app": "node scripts/app.mjs",
+    "dev": "next dev -H 127.0.0.1",
+    "dev:sample": "cross-env STOCKWISE_FIXTURES=1 next dev -H 127.0.0.1",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start -H 127.0.0.1",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:live": "vitest run --config vitest.live.config.ts",
+    "snapshot": "tsx scripts/snapshot.ts"
   },
   "dependencies": {
-    "@aws-amplify/ui-react": "^6.5.5",
-    "aws-amplify": "^6.6.6",
+    "d3-hierarchy": "^3.1.2",
+    "fast-xml-parser": "^5.11.2",
     "next": "14.2.10",
+    "papaparse": "^5.7.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
-    "@aws-amplify/backend": "^1.5.1",
-    "@aws-amplify/backend-cli": "^1.3.0",
-    "@types/node": "^20",
+    "@types/d3-hierarchy": "^3.1.7",
+    "@types/node": "^20.19.43",
+    "@types/papaparse": "^5.5.2",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "aws-cdk": "^2",
-    "aws-cdk-lib": "^2",
-    "constructs": "^10.3.0",
-    "esbuild": "^0.23.1",
+    "cross-env": "^10.1.0",
     "tsx": "^4.19.0",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "vitest": "^3.2.7"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

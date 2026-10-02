@@ -35,7 +35,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# amplify
-.amplify
-amplify_outputs*
-amplifyconfiguration*
+# local app data (saved portfolio, fund cache)
+/data/
+# full live snapshots (pnpm snapshot)
+/fixtures/live/
+
+# pnpm is the package manager; keep other lockfiles out
+package-lock.json
+yarn.lock
