@@ -1,0 +1,50 @@
+{
+  "XEQT.TO": {
+    "price": 36.42,
+    "currency": "CAD"
+  },
+  "VEQT.TO": {
+    "price": 47.18,
+    "currency": "CAD"
+  },
+  "XIC.TO": {
+    "price": 43.05,
+    "currency": "CAD"
+  },
+  "VCN.TO": {
+    "price": 55.3,
+    "currency": "CAD"
+  },
+  "ITOT": {
+    "price": 141.2,
+    "currency": "USD"
+  },
+  "VTI": {
+    "price": 321.75,
+    "currency": "USD"
+  },
+  "AAPL": {
+    "price": 252.1,
+    "currency": "USD"
+  },
+  "AMD": {
+    "price": 164.8,
+    "currency": "USD"
+  },
+  "NVDA": {
+    "price": 188.4,
+    "currency": "USD"
+  },
+  "RY.TO": {
+    "price": 176.25,
+    "currency": "CAD"
+  },
+  "USDCAD=X": {
+    "price": 1.3915,
+    "currency": "CAD"
+  },
+  "CADUSD=X": {
+    "price": 0.7187,
+    "currency": "USD"
+  }
+}

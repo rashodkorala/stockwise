@@ -1,0 +1,28 @@
+iShares Core MSCI EAFE IMI Index ETF
+Fund Holdings as of,"Sep 30, 2026"
+Inception Date,"Jan 20, 2004"
+Shares Outstanding,"1,234,567,890.00"
+Stock,-
+Bond,-
+Cash,-
+Other,-
+ 
+Ticker,Name,Sector,Asset Class,Market Value,Weight (%),Notional Value,Shares,Price,Location,Exchange,Currency,FX Rate,Market Currency
+ASML,ASML HOLDING NV,Information Technology,Equity,"163,800,000.00",1.82,"163,800,000.00","1,000.00",100.00,Netherlands,Euronext Amsterdam,EUR,1.00,EUR
+SAP,SAP,Information Technology,Equity,"144,900,000.00",1.61,"144,900,000.00","1,000.00",100.00,Germany,Xetra,EUR,1.00,EUR
+NESN,NESTLE SA,Consumer Staples,Equity,"119,700,000.00",1.33,"119,700,000.00","1,000.00",100.00,Switzerland,SIX Swiss Exchange,CHF,1.00,CHF
+NOVO B,NOVO NORDISK CLASS B,Health Care,Equity,"108,900,000.00",1.21,"108,900,000.00","1,000.00",100.00,Denmark,Omx Nordic Exchange Copenhagen A/S,DKK,1.00,DKK
+AZN,ASTRAZENECA PLC,Health Care,Equity,"107,100,000.00",1.19,"107,100,000.00","1,000.00",100.00,United Kingdom,London Stock Exchange,GBP,1.00,GBP
+ROG,ROCHE HOLDING PAR AG,Health Care,Equity,"103,500,000.00",1.15,"103,500,000.00","1,000.00",100.00,Switzerland,SIX Swiss Exchange,CHF,1.00,CHF
+SHEL,SHELL PLC,Energy,Equity,"100,800,000.00",1.12,"100,800,000.00","1,000.00",100.00,United Kingdom,London Stock Exchange,GBP,1.00,GBP
+7203,TOYOTA MOTOR CORP,Consumer Discretionary,Equity,"94,500,000.00",1.05,"94,500,000.00","1,000.00",100.00,Japan,Tokyo Stock Exchange,JPY,1.00,JPY
+NOVN,NOVARTIS AG,Health Care,Equity,"92,700,000.00",1.03,"92,700,000.00","1,000.00",100.00,Switzerland,SIX Swiss Exchange,CHF,1.00,CHF
+HSBA,HSBC HOLDINGS PLC,Financials,Equity,"90,900,000.00",1.01,"90,900,000.00","1,000.00",100.00,United Kingdom,London Stock Exchange,GBP,1.00,GBP
+6758,SONY GROUP CORP,Consumer Discretionary,Equity,"79,200,000.00",0.88,"79,200,000.00","1,000.00",100.00,Japan,Tokyo Stock Exchange,JPY,1.00,JPY
+SIE,SIEMENS N AG,Industrials,Equity,"77,400,000.00",0.86,"77,400,000.00","1,000.00",100.00,Germany,Xetra,EUR,1.00,EUR
+MC,LVMH,Consumer Discretionary,Equity,"72,900,000.00",0.81,"72,900,000.00","1,000.00",100.00,France,Nyse Euronext - Euronext Paris,EUR,1.00,EUR
+CBA,COMMONWEALTH BANK OF AUSTRALIA,Financials,Equity,"72,000,000.00",0.80,"72,000,000.00","1,000.00",100.00,Australia,Asx - All Markets,AUD,1.00,AUD
+8306,MITSUBISHI UFJ FINANCIAL GROUP INC,Financials,Equity,"70,200,000.00",0.78,"70,200,000.00","1,000.00",100.00,Japan,Tokyo Stock Exchange,JPY,1.00,JPY
+EUR,EUR CASH,Cash and/or Derivatives,Cash,"6,300,000.00",0.07,"6,300,000.00","1,000.00",100.00,European Union,-,EUR,1.00,EUR
+ 
+"The content contained herein is owned or licensed by BlackRock and/or its third-party information providers and is protected by applicable copyrights, trademarks, service marks, and/or other intellectual property rights."

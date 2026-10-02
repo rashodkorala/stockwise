@@ -1,0 +1,40 @@
+iShares Core S&P Total U.S. Stock Market ETF
+Fund Holdings as of,"Sep 30, 2026"
+Inception Date,"Jan 20, 2004"
+Shares Outstanding,"1,234,567,890.00"
+Stock,-
+Bond,-
+Cash,-
+Other,-
+ 
+Ticker,Name,Sector,Asset Class,Market Value,Weight (%),Notional Value,Quantity,Price,Location,Exchange,Currency,FX Rate,Market Currency,Accrual Date
+NVDA,NVIDIA CORP,Information Technology,Equity,"4,890,000,000.00",6.52,"4,890,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+MSFT,MICROSOFT CORP,Information Technology,Equity,"4,485,000,000.00",5.98,"4,485,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+AAPL,APPLE INC,Information Technology,Equity,"4,432,500,000.00",5.91,"4,432,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+AMZN,AMAZON COM INC,Consumer Discretionary,Equity,"2,707,500,000.00",3.61,"2,707,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+META,META PLATFORMS INC CLASS A,Communication,Equity,"1,965,000,000.00",2.62,"1,965,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+AVGO,BROADCOM INC,Information Technology,Equity,"1,657,500,000.00",2.21,"1,657,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+GOOGL,ALPHABET INC CLASS A,Communication,Equity,"1,447,500,000.00",1.93,"1,447,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+TSLA,TESLA INC,Consumer Discretionary,Equity,"1,365,000,000.00",1.82,"1,365,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+GOOG,ALPHABET INC CLASS C,Communication,Equity,"1,185,000,000.00",1.58,"1,185,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+BRKB,BERKSHIRE HATHAWAY INC CLASS B,Financials,Equity,"1,117,500,000.00",1.49,"1,117,500,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+JPM,JPMORGAN CHASE & CO,Financials,Equity,"982,500,000.00",1.31,"982,500,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+LLY,ELI LILLY,Health Care,Equity,"810,000,000.00",1.08,"810,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+V,VISA INC CLASS A,Financials,Equity,"690,000,000.00",0.92,"690,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+XOM,EXXON MOBIL CORP,Energy,Equity,"607,500,000.00",0.81,"607,500,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+ORCL,ORACLE CORP,Information Technology,Equity,"585,000,000.00",0.78,"585,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+MA,MASTERCARD INC CLASS A,Financials,Equity,"555,000,000.00",0.74,"555,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+NFLX,NETFLIX INC,Communication,Equity,"532,500,000.00",0.71,"532,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+COST,COSTCO WHOLESALE CORP,Consumer Staples,Equity,"525,000,000.00",0.70,"525,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+WMT,WALMART INC,Consumer Staples,Equity,"517,500,000.00",0.69,"517,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+UNH,UNITEDHEALTH GROUP INC,Health Care,Equity,"435,000,000.00",0.58,"435,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+HD,HOME DEPOT INC,Consumer Discretionary,Equity,"427,500,000.00",0.57,"427,500,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+PG,PROCTER & GAMBLE,Consumer Staples,Equity,"412,500,000.00",0.55,"412,500,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+JNJ,JOHNSON & JOHNSON,Health Care,Equity,"405,000,000.00",0.54,"405,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+AMD,ADVANCED MICRO DEVICES INC,Information Technology,Equity,"360,000,000.00",0.48,"360,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+CRM,SALESFORCE INC,Information Technology,Equity,"285,000,000.00",0.38,"285,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
+PLTR,PALANTIR TECHNOLOGIES INC CLASS A,Information Technology,Equity,"330,000,000.00",0.44,"330,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
+XTSLA,BLK CSH FND TREASURY SL AGENCY,Cash and/or Derivatives,Money Market,"157,500,000.00",0.21,"157,500,000.00","1,000.00",100.00,United States,-,USD,1.00,USD,-
+USD,USD CASH,Cash and/or Derivatives,Cash,"30,000,000.00",0.04,"30,000,000.00","1,000.00",100.00,United States,-,USD,1.00,USD,-
+ 
+"The content contained herein is owned or licensed by BlackRock and/or its third-party information providers and is protected by applicable copyrights, trademarks, service marks, and/or other intellectual property rights."

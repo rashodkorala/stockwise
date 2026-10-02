@@ -1,52 +1,87 @@
-"use client";
+import Link from "next/link";
+import { registryEntries } from "@/lib/sources/registry";
 
-import { useState, useEffect } from "react";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
-import "./../app/app.css";
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
-import "@aws-amplify/ui-react/styles.css";
+const COMMANDS: [string, string][] = [
+  ["XEQT", "X-ray a fund: every company inside it, looking through funds of funds"],
+  ["XEQT VEQT OVLP", "Overlap between two funds: shared holdings and what is unique to each"],
+  ["PORT", "Your portfolio: total exposure to each company across all your holdings"],
+  ["HELP", "This screen"],
+];
 
-Amplify.configure(outputs);
-
-const client = generateClient<Schema>();
-
-export default function App() {
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-
-  function listTodos() {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }
-
-  useEffect(() => {
-    listTodos();
-  }, []);
-
-  function createTodo() {
-    client.models.Todo.create({
-      content: window.prompt("Todo content"),
-    });
-  }
-
+export default function Home() {
+  const entries = registryEntries();
   return (
-    <main>
-      <h1>My todos</h1>
-      <button onClick={createTodo}>+ new</button>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.content}</li>
-        ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/nextjs/start/quickstart/nextjs-app-router-client-components/">
-          Review next steps of this tutorial.
-        </a>
-      </div>
+    <main className="page">
+      <section className="panel">
+        <div className="panel-head">Commands</div>
+        <div className="panel-body">
+          <p className="muted" style={{ marginBottom: 12 }}>
+            Type a command in the bar above and press Enter. Press <span className="tk">/</span> anywhere to jump to it.
+          </p>
+          <table className="data">
+            <tbody>
+              {COMMANDS.map(([cmd, desc]) => (
+                <tr key={cmd}>
+                  <td className="tk" style={{ width: 200 }}>
+                    {cmd} &lt;GO&gt;
+                  </td>
+                  <td>{desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">Try</div>
+        <div className="panel-body toolbar">
+          <Link className="btn-ghost" href="/etf/XEQT">
+            XEQT look-through
+          </Link>
+          <Link className="btn-ghost" href="/compare?a=XEQT&b=VEQT">
+            XEQT vs VEQT
+          </Link>
+          <Link className="btn-ghost" href="/etf/VTI">
+            VTI (SEC N-PORT)
+          </Link>
+          <Link className="btn-ghost" href="/portfolio">
+            Build a portfolio
+          </Link>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          Known funds <span className="muted">any US fund that files N-PORT also works</span>
+        </div>
+        <div className="panel-body table-wrap">
+          <table className="data">
+            <thead>
+              <tr>
+                <th>Ticker</th>
+                <th>Name</th>
+                <th>Listing</th>
+                <th>Free source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entries.map((e) => (
+                <tr key={e.ticker}>
+                  <td>
+                    <Link href={`/etf/${e.ticker}`} className="tk">
+                      {e.ticker}
+                    </Link>
+                  </td>
+                  <td>{e.name}</td>
+                  <td className="muted">{e.country === "CA" ? "TSX" : "US"}</td>
+                  <td className="muted">{e.sources.length ? e.sources.join(", ") : "paid fallback only"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
   );
 }
