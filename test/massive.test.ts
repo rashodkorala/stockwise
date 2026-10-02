@@ -54,7 +54,8 @@ describe("RateLimiter", () => {
     for (let i = 0; i < 5; i++) await limiter.take();
     expect(waits).toEqual([]);
     await limiter.take();
-    expect(waits).toHaveLength(1);
+    // Waits in slices of at most a second, so an abandoned request can leave promptly.
+    expect(Math.max(...waits)).toBeLessThanOrEqual(1_000);
     expect(now).toBeGreaterThanOrEqual(60_000);
   });
 });
@@ -75,12 +76,43 @@ describe("massiveGet", () => {
     expect(calls).toHaveLength(2);
   });
 
+  it("stops calling Massive for the rest of the run once the key is rejected", async () => {
+    const m = await load();
+    handler = () => ({ status: 401, body: { status: "ERROR" } });
+    await expect(m.massiveGet("prices", "/x")).rejects.toThrow(/rejected the API key/);
+    expect(calls).toHaveLength(2); // bearer, then the apiKey parameter
+    await expect(m.massiveGet("reference", "/y")).rejects.toBeInstanceOf(m.MassiveUnavailable);
+    expect(calls).toHaveLength(2);
+  });
+
   it("remembers a capability outside the plan and stops calling it", async () => {
     const m = await load();
     handler = () => ({ status: 403, body: { status: "NOT_AUTHORIZED" } });
     await expect(m.massiveGet("etf-global", "/etf-global/v1/constituents")).rejects.toBeInstanceOf(m.MassiveUnavailable);
     await expect(m.massiveGet("etf-global", "/etf-global/v1/constituents")).rejects.toThrow(/does not include etf-global/);
     expect(calls).toHaveLength(1);
+    expect(await m.isDenied("prices")).toBe(false);
+  });
+
+  it("drops queued requests once their feature turns out to be outside the plan", async () => {
+    const m = await load();
+    let now = 0;
+    // Room for one request a minute, so the next two have to wait in the queue.
+    m._setMassiveInternals({ limiter: new m.RateLimiter(1, () => now, async (ms) => void (now += ms)) });
+    handler = () => ({ status: 403, body: {} });
+    const results = await Promise.allSettled([1, 2, 3].map(() => m.massiveGet("etf-global", "/etf-global/v1/constituents")));
+    expect(results.every((r) => r.status === "rejected")).toBe(true);
+    expect(calls).toHaveLength(1);
+    expect(now).toBeLessThan(60_000); // nobody waited out the minute
+  });
+
+  it("treats a 404 from ETF Global as unavailable to this key", async () => {
+    const m = await load();
+    handler = () => ({ status: 404, body: { status: "NOT_FOUND" } });
+    await expect(m.massiveGet("etf-global", "/etf-global/v1/constituents")).rejects.toBeInstanceOf(m.MassiveUnavailable);
+    expect(await m.isDenied("etf-global")).toBe(true);
+    // A 404 elsewhere (an unknown ticker) stays an ordinary error.
+    await expect(m.massiveGet("prices", "/v2/aggs/ticker/ZZZZ/prev")).rejects.not.toBeInstanceOf(m.MassiveUnavailable);
     expect(await m.isDenied("prices")).toBe(false);
   });
 

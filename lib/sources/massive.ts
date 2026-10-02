@@ -37,19 +37,25 @@ export class RateLimiter {
     private sleep: Sleep = realSleep,
   ) {}
 
-  take(): Promise<void> {
+  /**
+   * Waits for a free slot. `abandon` is checked while waiting, so a request
+   * that will be refused anyway (bad key, feature outside the plan) leaves the
+   * queue instead of holding everyone behind it; it then rejects.
+   */
+  take(abandon?: () => boolean | Promise<boolean>): Promise<void> {
     const turn = this.queue.then(async () => {
       for (;;) {
+        if (abandon && (await abandon())) throw new MassiveUnavailable("request abandoned");
         const t = this.now();
         this.stamps = this.stamps.filter((s) => t - s < 60_000);
         if (this.stamps.length < this.perMinute) {
           this.stamps.push(t);
           return;
         }
-        await this.sleep(60_000 - (t - this.stamps[0]) + 25);
+        await this.sleep(Math.min(1_000, 60_000 - (t - this.stamps[0]) + 25));
       }
     });
-    this.queue = turn;
+    this.queue = turn.catch(() => {});
     return turn;
   }
 }
@@ -103,11 +109,15 @@ async function markDenied(cap: Capability) {
 export function _resetMassiveDenials() {
   denials = {};
   keyInQuery = false;
+  keyRejected = false;
 }
 
 // Massive accepts the key as a bearer token; its docs also show it as a query
 // parameter. If the header is ever rejected, switch to the parameter once.
 let keyInQuery = false;
+// Set once both styles are rejected: a bad key should not keep queueing
+// requests behind the rate limiter for the rest of the run.
+let keyRejected = false;
 
 /* ---------- Requests ---------- */
 
@@ -125,17 +135,22 @@ function urlFor(pathOrUrl: string, params: Params = {}): string {
  */
 export async function massiveGet<T>(cap: Capability, pathOrUrl: string, params: Params = {}): Promise<T> {
   if (!massiveEnabled()) throw new MassiveUnavailable("MASSIVE_API_KEY is not set");
+  if (keyRejected) throw new MassiveUnavailable("Massive rejected the API key (check MASSIVE_API_KEY)");
   if (await isDenied(cap)) throw new MassiveUnavailable(`Massive plan does not include ${cap}`);
   for (let attempt = 0; ; attempt++) {
     const key = process.env.MASSIVE_API_KEY!;
     const url = urlFor(pathOrUrl, keyInQuery ? { ...params, apiKey: key } : params);
     const headers: Record<string, string> = keyInQuery ? { Accept: "application/json" } : { Authorization: `Bearer ${key}`, Accept: "application/json" };
-    await getLimiter().take();
+    // Requests queued behind the limiter may learn, while waiting, that the key
+    // or this feature is unusable; they leave the queue rather than spend a request.
+    await getLimiter().take(async () => keyRejected || (await isDenied(cap)));
     try {
       return await fetchJson<T>(url, { headers });
     } catch (err) {
       const status = err instanceof HttpError ? err.status : undefined;
-      if (status === 403) {
+      // ETF Global answers an unknown fund with an empty list, so a 404 there
+      // means the endpoint itself is unavailable to this key: treat it like 403.
+      if (status === 403 || (status === 404 && cap === "etf-global")) {
         await markDenied(cap);
         throw new MassiveUnavailable(`Massive plan does not include ${cap}`);
       }
@@ -143,7 +158,10 @@ export async function massiveGet<T>(cap: Capability, pathOrUrl: string, params: 
         keyInQuery = true;
         continue;
       }
-      if (status === 401) throw new Error("Massive rejected the API key (check MASSIVE_API_KEY)");
+      if (status === 401) {
+        keyRejected = true;
+        throw new MassiveUnavailable("Massive rejected the API key (check MASSIVE_API_KEY)");
+      }
       if (status === 429 && attempt === 0) {
         await retrySleep(15_000);
         continue;

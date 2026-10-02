@@ -54,7 +54,8 @@ Delete `data/` to start fresh. Set `STOCKWISE_DATA_DIR` to keep it elsewhere.
 
 ```bash
 pnpm test            # parsers, identity matching, look-through, overlap, portfolio maths (offline)
-pnpm test:live       # checks every live source, including XEQT against BlackRock's own look-through
+pnpm test:live       # checks every live source, including XEQT against BlackRock's own look-through;
+                     # reads .env.local, and runs the Massive checks when MASSIVE_API_KEY is set there
 pnpm exec tsc --noEmit
 ```
 
