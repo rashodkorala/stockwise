@@ -1,8 +1,8 @@
 /**
  * Downloads live holdings files.
  *
- *   npm run snapshot              full files into fixtures/live/ (gitignored) for STOCKWISE_FIXTURES=live
- *   npm run snapshot -- --excerpt also rewrites the committed excerpts in fixtures/holdings/
+ *   pnpm snapshot              full files into fixtures/live/ (gitignored) for STOCKWISE_FIXTURES=live
+ *   pnpm snapshot --excerpt also rewrites the committed excerpts in fixtures/holdings/
  *
  * Excerpts keep each file's real metadata and header with its largest rows, so
  * parser tests run against the genuine formats without committing full files.

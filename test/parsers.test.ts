@@ -6,7 +6,7 @@ import { mapFmpHoldings } from "@/lib/sources/fmp";
 import { findInScreener, parseIsharesCsv, parseIsharesDate } from "@/lib/sources/ishares";
 import { isKnownFund } from "@/lib/sources/resolve";
 
-// Fixtures are excerpts of real files (npm run snapshot -- --excerpt).
+// Fixtures are excerpts of real files (pnpm snapshot --excerpt).
 const fixture = (f: string) => readFileSync(path.join(__dirname, "..", "fixtures", "holdings", f), "utf8");
 
 describe("BlackRock Canada CSV", () => {

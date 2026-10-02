@@ -21,17 +21,18 @@ BlackRock Canada files for funds of funds also publish BlackRock's own look-thro
 
 ## Install and run
 
-Stockwise runs as a small app on your own computer. You need [Node.js](https://nodejs.org) 20 or newer.
+Stockwise runs as a small app on your own computer. You need [Node.js](https://nodejs.org) 20 or newer and [pnpm](https://pnpm.io).
 
 ```bash
+corepack enable               # once: turns on pnpm (bundled with Node 20 to 24); or: npm install -g pnpm
 git clone https://github.com/rashodkorala/stockwise
 cd stockwise
-npm install
+pnpm install
 cp .env.example .env.local    # Windows: copy .env.example .env.local; then set SEC_USER_AGENT
-npm run app
+pnpm app
 ```
 
-`npm run app` builds the app the first time (about a minute), starts it at http://localhost:3000, and opens your browser. Press Ctrl+C to stop it. It only listens on this computer, not your network. `npm run dev` runs it with live reload while you change code.
+`pnpm app` builds the app the first time (about a minute), starts it at http://localhost:3000, and opens your browser. Press Ctrl+C to stop it. It only listens on this computer, not your network. `pnpm dev` runs it with live reload while you change code.
 
 ### Your data
 
@@ -42,15 +43,15 @@ Delete `data/` to start fresh. Set `STOCKWISE_DATA_DIR` to keep it elsewhere.
 
 ### Offline modes
 
-- `npm run dev:sample` serves the committed excerpts in `fixtures/holdings/`: real files trimmed to each fund's 40 largest rows.
-- `npm run snapshot`, then `STOCKWISE_FIXTURES=live npm run dev`, serves full live files saved to `fixtures/live/` (gitignored).
+- `pnpm dev:sample` serves the committed excerpts in `fixtures/holdings/`: real files trimmed to each fund's 40 largest rows.
+- `pnpm snapshot`, then `STOCKWISE_FIXTURES=live pnpm dev`, serves full live files saved to `fixtures/live/` (gitignored).
 
 ## Tests
 
 ```bash
-npm test           # parsers, identity matching, look-through, overlap, portfolio maths (offline)
-npm run test:live  # checks every live source, including XEQT against BlackRock's own look-through
-npx tsc --noEmit
+pnpm test            # parsers, identity matching, look-through, overlap, portfolio maths (offline)
+pnpm test:live       # checks every live source, including XEQT against BlackRock's own look-through
+pnpm exec tsc --noEmit
 ```
 
 ## Layout
@@ -60,7 +61,7 @@ npx tsc --noEmit
 - `lib/service.ts`: server-side orchestration and the compact views sent to pages.
 - `app/`: pages (`/etf/[ticker]`, `/compare`, `/portfolio`) and JSON APIs (`/api/etf/[ticker]`, `/api/overlap`, `/api/portfolio`).
 - `lib/storage.ts`, `lib/cache.ts`: the saved portfolio and the on-disk fund cache under `data/`.
-- `scripts/app.mjs`: the `npm run app` launcher.
+- `scripts/app.mjs`: the `pnpm app` launcher.
 
 ## Roadmap
 

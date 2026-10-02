@@ -7,7 +7,7 @@ import { parseIsharesCsv } from "./ishares";
 /**
  * Offline modes:
  *   STOCKWISE_FIXTURES=1     committed excerpts of real files (fixtures/holdings), for tests and demos
- *   STOCKWISE_FIXTURES=live  full snapshots from `npm run snapshot` (fixtures/live, not committed)
+ *   STOCKWISE_FIXTURES=live  full snapshots from `pnpm snapshot` (fixtures/live, not committed)
  */
 export function fixturesEnabled(): boolean {
   return process.env.STOCKWISE_FIXTURES === "1" || process.env.STOCKWISE_FIXTURES === "live";

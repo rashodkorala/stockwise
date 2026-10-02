@@ -1,4 +1,4 @@
-// npm run app: builds Stockwise when the source has changed since the last
+// pnpm app: builds Stockwise when the source has changed since the last
 // build, then serves it on this computer only and opens the browser.
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, readdirSync, statSync } from "node:fs";

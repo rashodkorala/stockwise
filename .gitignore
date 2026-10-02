@@ -37,5 +37,9 @@ next-env.d.ts
 
 # local app data (saved portfolio, fund cache)
 /data/
-# full live snapshots (npm run snapshot)
+# full live snapshots (pnpm snapshot)
 /fixtures/live/
+
+# pnpm is the package manager; keep other lockfiles out
+package-lock.json
+yarn.lock
