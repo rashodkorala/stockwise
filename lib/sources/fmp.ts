@@ -1,4 +1,4 @@
-import { cached, HOUR } from "../cache";
+import { diskCached, HOUR } from "../cache";
 import { fetchJson } from "../http";
 import type { FundHoldings, Holding } from "../types";
 
@@ -50,7 +50,7 @@ export function fetchFmpHoldings(
   country: string | undefined,
   isKnownFund: (t: string) => boolean,
 ): Promise<FundHoldings> {
-  return cached(`fmp:${ticker}:${country ?? ""}`, 12 * HOUR, async () => {
+  return diskCached(`fmp:${ticker}:${country ?? ""}`, 12 * HOUR, async () => {
     const symbol = fmpSymbol(ticker, country);
     const rows = await fetchJson<FmpHolding[]>(
       `${BASE}/etf/holdings?symbol=${encodeURIComponent(symbol)}&apikey=${process.env.FMP_API_KEY}`,

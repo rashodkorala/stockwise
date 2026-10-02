@@ -1,32 +1,12 @@
 "use client";
 
-import { Authenticator, ThemeProvider, useAuthenticator } from "@aws-amplify/ui-react";
-import "@aws-amplify/ui-react/styles.css";
-import { Amplify } from "aws-amplify";
-import { generateClient } from "aws-amplify/data";
 import { useCallback, useEffect, useState } from "react";
-import type { Schema } from "@/amplify/data/resource";
-import outputs from "@/amplify_outputs.json";
 import BarList from "@/components/BarList";
 import HoldingsTable from "@/components/HoldingsTable";
 import OverlapMatrix from "@/components/OverlapMatrix";
 import { money, pct } from "@/lib/format";
 import type { PortfolioView } from "@/lib/service";
-
-// amplify_outputs.json is written by `npx ampx sandbox` or the Amplify pipeline.
-// Without it (a placeholder {} from scripts/ensure-amplify-outputs.mjs), the
-// app runs with accounts switched off and saves portfolios in the browser.
-const accountsEnabled = Boolean((outputs as Record<string, unknown>).auth);
-if (accountsEnabled) Amplify.configure(outputs as Parameters<typeof Amplify.configure>[0]);
-
-let client: ReturnType<typeof generateClient<Schema>> | undefined;
-const dataClient = () => (client ??= generateClient<Schema>());
-
-interface AuthState {
-  status: "configuring" | "authenticated" | "unauthenticated" | "disabled";
-  loginId?: string;
-  signOut?: () => void;
-}
+import type { SavedPortfolio } from "@/lib/storage";
 
 interface Position {
   ticker: string;
@@ -35,7 +15,8 @@ interface Position {
   currency: "CAD" | "USD";
 }
 
-const GUEST_KEY = "stockwise.portfolio";
+/** Earlier versions saved in the browser; read once to carry a portfolio over. */
+const LEGACY_BROWSER_KEY = "stockwise.portfolio";
 const EMPTY: Position = { ticker: "", units: "", marketValue: "", currency: "CAD" };
 const DEMO: Position[] = [
   { ticker: "XEQT", units: "250", marketValue: "", currency: "CAD" },
@@ -45,62 +26,50 @@ const DEMO: Position[] = [
 
 const toNumber = (s: string) => (s.trim() === "" ? null : Number(s.replace(/,/g, "")));
 
-function readGuest(): { positions: Position[]; base: "CAD" | "USD" } | null {
+function readLegacyBrowserPortfolio(): { positions: Position[]; base: "CAD" | "USD" } | null {
   try {
-    const raw = localStorage.getItem(GUEST_KEY);
+    const raw = localStorage.getItem(LEGACY_BROWSER_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 }
 
-function writeGuest(positions: Position[], base: "CAD" | "USD") {
-  try {
-    localStorage.setItem(GUEST_KEY, JSON.stringify({ positions, base }));
-  } catch {
-    // Private mode or blocked storage: the portfolio just won't persist.
-  }
-}
+const toForm = (p: SavedPortfolio["positions"][number]): Position => ({
+  ticker: p.ticker,
+  units: p.units?.toString() ?? "",
+  marketValue: p.marketValue?.toString() ?? "",
+  currency: p.currency,
+});
 
-function Portfolio({ auth }: { auth: AuthState }) {
-  const authStatus = auth.status;
-  const signedIn = authStatus === "authenticated";
-  const [showSignIn, setShowSignIn] = useState(false);
+export default function PortfolioClient() {
   const [positions, setPositions] = useState<Position[]>([EMPTY]);
   const [base, setBase] = useState<"CAD" | "USD">("CAD");
-  const [recordId, setRecordId] = useState<string | null>(null);
+  const [savedAt, setSavedAt] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const [view, setView] = useState<PortfolioView | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Load from the account when signed in, otherwise from this browser.
+  // Load the portfolio saved on this computer (data/portfolio.json).
   useEffect(() => {
-    if (authStatus === "configuring") return;
-    if (!signedIn) {
-      const g = readGuest();
-      if (g) {
-        setPositions(g.positions.length ? g.positions : [EMPTY]);
-        setBase(g.base);
-      }
-      setRecordId(null);
-      return;
-    }
-    setShowSignIn(false);
-    dataClient().models.Portfolio.list().then(({ data, errors }) => {
-      if (errors?.length) return setStatus(`Could not load your portfolio: ${errors[0].message}`);
-      const p = data[0];
-      if (!p) return;
-      setRecordId(p.id);
-      setBase(p.baseCurrency === "USD" ? "USD" : "CAD");
-      const saved = (p.positions ?? []).filter(Boolean).map((x) => ({
-        ticker: x!.ticker,
-        units: x!.units?.toString() ?? "",
-        marketValue: x!.marketValue?.toString() ?? "",
-        currency: (x!.currency === "USD" ? "USD" : "CAD") as Position["currency"],
-      }));
-      if (saved.length) setPositions(saved);
-    });
-  }, [authStatus, signedIn]);
+    fetch("/api/portfolio/saved")
+      .then((r) => r.json() as Promise<SavedPortfolio>)
+      .then((saved) => {
+        if (saved.positions.length) {
+          setPositions(saved.positions.map(toForm));
+          setBase(saved.baseCurrency);
+          setSavedAt(saved.savedAt);
+          return;
+        }
+        const legacy = readLegacyBrowserPortfolio();
+        if (legacy?.positions.length) {
+          setPositions(legacy.positions);
+          setBase(legacy.base);
+          setStatus("Loaded the portfolio this browser saved earlier. Press Save to keep it on this computer.");
+        }
+      })
+      .catch(() => setStatus("Could not load the saved portfolio."));
+  }, []);
 
   const update = (i: number, patch: Partial<Position>) =>
     setPositions((ps) => ps.map((p, j) => (j === i ? { ...p, ...patch } : p)));
@@ -108,28 +77,24 @@ function Portfolio({ auth }: { auth: AuthState }) {
   const valid = positions.filter((p) => p.ticker.trim() && (toNumber(p.units) || toNumber(p.marketValue)));
 
   const save = useCallback(async () => {
-    if (!signedIn) {
-      writeGuest(positions, base);
-      setStatus("Saved in this browser. Sign in to keep it across devices.");
-      return;
-    }
-    const payload = {
-      name: "My portfolio",
-      baseCurrency: base,
-      positions: valid.map((p) => ({
-        ticker: p.ticker.trim().toUpperCase(),
-        units: toNumber(p.units),
-        marketValue: toNumber(p.marketValue),
-        currency: p.currency,
-      })),
-    };
-    const { data, errors } = recordId
-      ? await dataClient().models.Portfolio.update({ id: recordId, ...payload })
-      : await dataClient().models.Portfolio.create(payload);
-    if (errors?.length || !data) return setStatus(`Save failed: ${errors?.[0]?.message ?? "unknown error"}`);
-    setRecordId(data.id);
-    setStatus("Saved to your account.");
-  }, [signedIn, positions, base, valid, recordId]);
+    const res = await fetch("/api/portfolio/saved", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        baseCurrency: base,
+        positions: valid.map((p) => ({
+          ticker: p.ticker,
+          units: toNumber(p.units),
+          marketValue: toNumber(p.marketValue),
+          currency: p.currency,
+        })),
+      }),
+    });
+    const body = await res.json();
+    if (!res.ok) return setStatus(`Save failed: ${body.error ?? res.statusText}`);
+    setSavedAt(body.savedAt);
+    setStatus("Saved on this computer.");
+  }, [base, valid]);
 
   async function analyse() {
     setLoading(true);
@@ -163,30 +128,10 @@ function Portfolio({ auth }: { auth: AuthState }) {
       <section className="panel">
         <div className="panel-head">
           <span>Holdings</span>
-          <span className="toolbar">
-            {authStatus === "disabled" ? (
-              <span className="muted">Accounts off: saving to this browser (run npx ampx sandbox to enable sign-in)</span>
-            ) : signedIn ? (
-              <>
-                <span className="muted">{auth.loginId}</span>
-                <button className="btn-ghost" onClick={auth.signOut}>
-                  Sign out
-                </button>
-              </>
-            ) : (
-              <button className="btn-ghost" onClick={() => setShowSignIn((s) => !s)}>
-                {showSignIn ? "Cancel" : "Sign in to sync"}
-              </button>
-            )}
+          <span className="muted">
+            {savedAt ? `Saved on this computer ${new Date(savedAt).toLocaleString()}` : "Not saved yet"}
           </span>
         </div>
-        {showSignIn && !signedIn && (
-          <div className="panel-body" style={{ borderBottom: "1px solid var(--rule)" }}>
-            <ThemeProvider colorMode="dark">
-              <Authenticator />
-            </ThemeProvider>
-          </div>
-        )}
         <div className="panel-body">
           <p className="muted" style={{ marginBottom: 12 }}>
             Enter each holding as units (priced live) or as a market value. Funds are looked through to their companies; anything
@@ -393,19 +338,5 @@ function Results({ view }: { view: PortfolioView }) {
         </div>
       </section>
     </>
-  );
-}
-
-function AccountPortfolio() {
-  const { authStatus, user, signOut } = useAuthenticator((ctx) => [ctx.authStatus, ctx.user]);
-  return <Portfolio auth={{ status: authStatus, loginId: user?.signInDetails?.loginId, signOut }} />;
-}
-
-export default function PortfolioClient() {
-  if (!accountsEnabled) return <Portfolio auth={{ status: "disabled" }} />;
-  return (
-    <Authenticator.Provider>
-      <AccountPortfolio />
-    </Authenticator.Provider>
   );
 }

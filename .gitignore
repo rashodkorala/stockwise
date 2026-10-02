@@ -35,9 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# amplify
-.amplify
-amplify_outputs*
-amplifyconfiguration*
+# local app data (saved portfolio, fund cache)
+/data/
 # full live snapshots (npm run snapshot)
 /fixtures/live/

@@ -1,5 +1,5 @@
 import { XMLParser } from "fast-xml-parser";
-import { cached, DAY } from "../cache";
+import { cached, DAY, diskCached } from "../cache";
 import { fetchSec } from "../http";
 import { normaliseCountry } from "../identity";
 import type { AssetClass, FundHoldings, Holding } from "../types";
@@ -101,20 +101,24 @@ interface SeriesRef {
 }
 
 async function seriesIndex(): Promise<Map<string, SeriesRef>> {
-  return cached("sec:company_tickers_mf", DAY, async () => {
-    const raw = JSON.parse(await fetchSec("https://www.sec.gov/files/company_tickers_mf.json")) as {
-      fields: string[];
-      data: (string | number)[][];
-    };
-    const iCik = raw.fields.indexOf("cik");
-    const iSeries = raw.fields.indexOf("seriesId");
-    const iSymbol = raw.fields.indexOf("symbol");
-    const map = new Map<string, SeriesRef>();
-    for (const row of raw.data) {
-      const symbol = String(row[iSymbol]).toUpperCase();
-      if (!map.has(symbol)) map.set(symbol, { cik: Number(row[iCik]), seriesId: String(row[iSeries]) });
-    }
-    return map;
+  return cached("sec:series-map", DAY, async () => {
+    // Persisted as plain entries; a Map does not survive JSON.
+    const entries = await diskCached("sec:company_tickers_mf", DAY, async () => {
+      const raw = JSON.parse(await fetchSec("https://www.sec.gov/files/company_tickers_mf.json")) as {
+        fields: string[];
+        data: (string | number)[][];
+      };
+      const iCik = raw.fields.indexOf("cik");
+      const iSeries = raw.fields.indexOf("seriesId");
+      const iSymbol = raw.fields.indexOf("symbol");
+      const map = new Map<string, SeriesRef>();
+      for (const row of raw.data) {
+        const symbol = String(row[iSymbol]).toUpperCase();
+        if (!map.has(symbol)) map.set(symbol, { cik: Number(row[iCik]), seriesId: String(row[iSeries]) });
+      }
+      return Array.from(map.entries());
+    });
+    return new Map(entries);
   });
 }
 
@@ -144,5 +148,5 @@ export async function nportDocumentUrl(ticker: string): Promise<string> {
 }
 
 export function fetchNportHoldings(ticker: string): Promise<FundHoldings> {
-  return cached(`nport:${ticker}`, DAY, async () => parseNportXml(await fetchSec(await nportDocumentUrl(ticker), 60_000), ticker));
+  return diskCached(`nport:${ticker}`, DAY, async () => parseNportXml(await fetchSec(await nportDocumentUrl(ticker), 60_000), ticker));
 }

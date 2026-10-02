@@ -1,5 +1,5 @@
 import Papa from "papaparse";
-import { cached, DAY, HOUR } from "../cache";
+import { DAY, diskCached, HOUR } from "../cache";
 import { fetchJson, fetchText } from "../http";
 import { normaliseCountry } from "../identity";
 import type { AssetClass, FundHoldings, Holding } from "../types";
@@ -202,7 +202,7 @@ export function findInScreener(feed: unknown, ticker: string): IsharesProduct | 
 }
 
 export async function discoverIshares(region: Region, ticker: string): Promise<IsharesProduct> {
-  const feed = await cached(`ishares-screener:${region}`, DAY, () => fetchJson<unknown>(SITES[region].screener));
+  const feed = await diskCached(`ishares-screener:${region}`, DAY, () => fetchJson<unknown>(SITES[region].screener));
   const product = findInScreener(feed, ticker);
   if (!product) throw new Error(`${ticker} is not in the iShares ${region.toUpperCase()} product list`);
   return product;
@@ -223,7 +223,7 @@ export function fetchIsharesHoldings(
   known: IsharesProduct | undefined,
   isKnownFund: (ticker: string) => boolean,
 ): Promise<FundHoldings> {
-  return cached(`ishares:${region}:${ticker}`, 12 * HOUR, async () => {
+  return diskCached(`ishares:${region}:${ticker}`, 12 * HOUR, async () => {
     const attempt = async (p: IsharesProduct) => {
       const fund = parseIsharesCsv(await fetchText(holdingsUrl(region, ticker, p)), ticker, region, isKnownFund);
       return fund.name === ticker && p.name ? { ...fund, name: p.name } : fund;

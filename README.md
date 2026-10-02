@@ -4,7 +4,7 @@ A Bloomberg-style terminal for looking *through* your ETFs to the companies you 
 
 - **X-ray a fund** (`XEQT <GO>`): every underlying security, expanding funds of funds (XEQT → XTOT, ITOT, XIC, XEF, XEC → stocks), with a treemap, sector and country breakdowns, and a "held via" path for each name.
 - **Overlap** (`ITOT VTI OVLP <GO>`): weighted overlap, shared holdings with both weights, and what is unique to each fund.
-- **Portfolio** (`PORT <GO>`): enter units or market values to see your total exposure to each company across every fund and stock you hold, plus a fund-overlap matrix. Saved to your account (Amplify Cognito + DynamoDB) or, signed out, to the browser.
+- **Portfolio** (`PORT <GO>`): enter units or market values to see your total exposure to each company across every fund and stock you hold, plus a fund-overlap matrix. Saved on this computer.
 
 ## Data sources
 
@@ -19,21 +19,31 @@ Securities are matched across sources by ISIN, CUSIP, ticker + country, then a n
 
 BlackRock Canada files for funds of funds also publish BlackRock's own look-through. The ETF page compares ours against it: for XEQT, all of BlackRock's 500 largest names match to within 0.004 percentage points.
 
-## Running locally
+## Install and run
+
+Stockwise runs as a small app on your own computer. You need [Node.js](https://nodejs.org) 20 or newer.
 
 ```bash
-npm ci
-cp .env.example .env.local        # set SEC_USER_AGENT to your name and email
-npx ampx sandbox                  # deploys a personal Amplify backend and writes amplify_outputs.json
-npm run dev
+git clone https://github.com/rashodkorala/stockwise
+cd stockwise
+npm install
+cp .env.example .env.local    # Windows: copy .env.example .env.local; then set SEC_USER_AGENT
+npm run app
 ```
 
-Offline modes:
+`npm run app` builds the app the first time (about a minute), starts it at http://localhost:3000, and opens your browser. Press Ctrl+C to stop it. It only listens on this computer, not your network. `npm run dev` runs it with live reload while you change code.
+
+### Your data
+
+- `data/portfolio.json`: your saved portfolio.
+- `data/cache/`: downloaded fund holdings (kept 12 to 24 hours), so restarts are fast.
+
+Delete `data/` to start fresh. Set `STOCKWISE_DATA_DIR` to keep it elsewhere.
+
+### Offline modes
 
 - `npm run dev:sample` serves the committed excerpts in `fixtures/holdings/`: real files trimmed to each fund's 40 largest rows.
 - `npm run snapshot`, then `STOCKWISE_FIXTURES=live npm run dev`, serves full live files saved to `fixtures/live/` (gitignored).
-
-The portfolio page needs an `amplify_outputs.json` to compile; the sandbox command creates it.
 
 ## Tests
 
@@ -49,7 +59,8 @@ npx tsc --noEmit
 - `lib/analytics/`: pure look-through, overlap, and portfolio functions.
 - `lib/service.ts`: server-side orchestration and the compact views sent to pages.
 - `app/`: pages (`/etf/[ticker]`, `/compare`, `/portfolio`) and JSON APIs (`/api/etf/[ticker]`, `/api/overlap`, `/api/portfolio`).
-- `amplify/`: Cognito auth and the owner-only `Portfolio` model.
+- `lib/storage.ts`, `lib/cache.ts`: the saved portfolio and the on-disk fund cache under `data/`.
+- `scripts/app.mjs`: the `npm run app` launcher.
 
 ## Roadmap
 
