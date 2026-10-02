@@ -13,8 +13,20 @@ import OverlapMatrix from "@/components/OverlapMatrix";
 import { money, pct } from "@/lib/format";
 import type { PortfolioView } from "@/lib/service";
 
-Amplify.configure(outputs);
-const client = generateClient<Schema>();
+// amplify_outputs.json is written by `npx ampx sandbox` or the Amplify pipeline.
+// Without it (a placeholder {} from scripts/ensure-amplify-outputs.mjs), the
+// app runs with accounts switched off and saves portfolios in the browser.
+const accountsEnabled = Boolean((outputs as Record<string, unknown>).auth);
+if (accountsEnabled) Amplify.configure(outputs as Parameters<typeof Amplify.configure>[0]);
+
+let client: ReturnType<typeof generateClient<Schema>> | undefined;
+const dataClient = () => (client ??= generateClient<Schema>());
+
+interface AuthState {
+  status: "configuring" | "authenticated" | "unauthenticated" | "disabled";
+  loginId?: string;
+  signOut?: () => void;
+}
 
 interface Position {
   ticker: string;
@@ -50,8 +62,8 @@ function writeGuest(positions: Position[], base: "CAD" | "USD") {
   }
 }
 
-function Portfolio() {
-  const { authStatus, user, signOut } = useAuthenticator((ctx) => [ctx.authStatus, ctx.user]);
+function Portfolio({ auth }: { auth: AuthState }) {
+  const authStatus = auth.status;
   const signedIn = authStatus === "authenticated";
   const [showSignIn, setShowSignIn] = useState(false);
   const [positions, setPositions] = useState<Position[]>([EMPTY]);
@@ -74,7 +86,7 @@ function Portfolio() {
       return;
     }
     setShowSignIn(false);
-    client.models.Portfolio.list().then(({ data, errors }) => {
+    dataClient().models.Portfolio.list().then(({ data, errors }) => {
       if (errors?.length) return setStatus(`Could not load your portfolio: ${errors[0].message}`);
       const p = data[0];
       if (!p) return;
@@ -112,8 +124,8 @@ function Portfolio() {
       })),
     };
     const { data, errors } = recordId
-      ? await client.models.Portfolio.update({ id: recordId, ...payload })
-      : await client.models.Portfolio.create(payload);
+      ? await dataClient().models.Portfolio.update({ id: recordId, ...payload })
+      : await dataClient().models.Portfolio.create(payload);
     if (errors?.length || !data) return setStatus(`Save failed: ${errors?.[0]?.message ?? "unknown error"}`);
     setRecordId(data.id);
     setStatus("Saved to your account.");
@@ -152,10 +164,12 @@ function Portfolio() {
         <div className="panel-head">
           <span>Holdings</span>
           <span className="toolbar">
-            {signedIn ? (
+            {authStatus === "disabled" ? (
+              <span className="muted">Accounts off: saving to this browser (run npx ampx sandbox to enable sign-in)</span>
+            ) : signedIn ? (
               <>
-                <span className="muted">{user?.signInDetails?.loginId}</span>
-                <button className="btn-ghost" onClick={signOut}>
+                <span className="muted">{auth.loginId}</span>
+                <button className="btn-ghost" onClick={auth.signOut}>
                   Sign out
                 </button>
               </>
@@ -382,10 +396,16 @@ function Results({ view }: { view: PortfolioView }) {
   );
 }
 
+function AccountPortfolio() {
+  const { authStatus, user, signOut } = useAuthenticator((ctx) => [ctx.authStatus, ctx.user]);
+  return <Portfolio auth={{ status: authStatus, loginId: user?.signInDetails?.loginId, signOut }} />;
+}
+
 export default function PortfolioClient() {
+  if (!accountsEnabled) return <Portfolio auth={{ status: "disabled" }} />;
   return (
     <Authenticator.Provider>
-      <Portfolio />
+      <AccountPortfolio />
     </Authenticator.Provider>
   );
 }
