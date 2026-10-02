@@ -20,7 +20,7 @@ const LEGACY_BROWSER_KEY = "stockwise.portfolio";
 const EMPTY: Position = { ticker: "", units: "", marketValue: "", currency: "CAD" };
 const DEMO: Position[] = [
   { ticker: "XEQT", units: "250", marketValue: "", currency: "CAD" },
-  { ticker: "VTI", units: "", marketValue: "5000", currency: "USD" },
+  { ticker: "VEQT", units: "", marketValue: "5000", currency: "CAD" },
   { ticker: "AAPL", units: "10", marketValue: "", currency: "USD" },
 ];
 

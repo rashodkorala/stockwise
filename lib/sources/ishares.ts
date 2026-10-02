@@ -100,6 +100,7 @@ function parseTable(rows: string[][], headerIdx: number, isKnownFund: (t: string
     const { cls, isFund } = classify(get(r, "assetClass"), rowName, isKnownFund, rowTicker);
     holdings.push({
       ticker: rowTicker,
+      tickerScheme: "blackrock",
       name: rowName,
       isin: blankToUndefined(get(r, "isin")),
       cusip: blankToUndefined(get(r, "cusip")),

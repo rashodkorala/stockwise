@@ -4,6 +4,7 @@ import { fixturesEnabled, loadFixtureHoldings } from "./fixtures";
 import { fetchFmpHoldings, fmpEnabled } from "./fmp";
 import { fetchIsharesHoldings } from "./ishares";
 import { lookupRegistry, parseSymbol } from "./registry";
+import { fetchVanguardHoldings } from "./vanguard";
 
 export const isKnownFund = (ticker: string) => lookupRegistry(ticker) !== undefined;
 
@@ -23,7 +24,7 @@ export function resolveSymbol(input: string): ResolvedSymbol {
     : entry && entry.country === country
       ? [...entry.sources]
       : country === "CA"
-        ? ["ishares-ca"]
+        ? ["ishares-ca", "vanguard-ca"]
         : ["ishares-us", "edgar-nport"];
   if (!fixturesEnabled() && fmpEnabled()) sources.push("fmp");
   return { ticker: parsed.ticker, country, name: entry?.name, sources };
@@ -38,6 +39,8 @@ function load(source: SourceId, sym: ResolvedSymbol): Promise<FundHoldings> {
       return fetchIsharesHoldings("us", sym.ticker, entry?.ishares, isKnownFund);
     case "ishares-ca":
       return fetchIsharesHoldings("ca", sym.ticker, entry?.ishares, isKnownFund);
+    case "vanguard-ca":
+      return fetchVanguardHoldings(sym.ticker);
     case "edgar-nport":
       return fetchNportHoldings(sym.ticker);
     case "fmp":

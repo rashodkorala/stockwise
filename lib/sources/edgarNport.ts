@@ -70,8 +70,18 @@ export function parseNportXml(doc: string, ticker: string): FundHoldings {
     const ids = (s.identifiers ?? {}) as Node;
     const assetClass = assetClassFor(text(s.assetCat), text(s.issuerCat));
     const isShort = text(s.payoffProfile) === "Short";
+    // Cash collateral from securities lending is reinvested (usually in a money
+    // market fund) and owed back to borrowers, so it is not the fund's exposure.
+    const collateral = ((s.securityLending ?? {}) as Node).cashCollateralCondition as Node | undefined;
+    const valUSD = Number(text(s.valUSD));
+    const collateralShare =
+      collateral && text(collateral["@_isCashCollateral"]) === "Y" && valUSD > 0
+        ? Math.min(1, Number(text(collateral["@_cashCollateralVal"])) / valUSD || 0)
+        : 0;
+    if (collateralShare >= 1) continue;
     holdings.push({
       ticker: attrValue(ids.ticker),
+      tickerScheme: "sec",
       // The issuer name reads well; the abbreviated title carries the share class ("ALPHABET INC-A").
       name: text(s.name) ?? text(s.title) ?? "Unknown",
       altName: text(s.title),
@@ -79,7 +89,7 @@ export function parseNportXml(doc: string, ticker: string): FundHoldings {
       cusip: text(s.cusip),
       country: normaliseCountry(text(s.invCountry)),
       assetClass,
-      weight: ((isShort ? -1 : 1) * Math.abs(pct)) / 100,
+      weight: (((isShort ? -1 : 1) * Math.abs(pct)) / 100) * (1 - collateralShare),
       marketValue: Number(text(s.valUSD)) || undefined,
       isFund: assetClass === "fund",
     });

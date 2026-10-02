@@ -14,6 +14,7 @@ export function money(v: number, currency = "CAD", compact = false): string {
 export const SOURCE_LABELS: Record<string, string> = {
   "ishares-us": "iShares (US) daily holdings",
   "ishares-ca": "BlackRock Canada daily holdings",
+  "vanguard-ca": "Vanguard Canada month-end holdings",
   "edgar-nport": "SEC N-PORT quarterly filing",
   fmp: "Financial Modeling Prep",
   sample: "Sample data",

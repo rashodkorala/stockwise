@@ -1,0 +1,162 @@
+{
+ "fundFullName": "Vanguard Morningstar U.S. Total Market Index ETF",
+ "fundCurrency": "CAD",
+ "items": [
+  {
+   "issuerName": "Vanguard Morningstar Total Stock Market ETF",
+   "securityLongDescription": "Vanguard Morningstar Total Stock Market ETF",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 99.97333,
+   "sedol1": "2762568",
+   "ticker": "VTI",
+   "securityType": "EQ.ETF",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 19671490047.91,
+   "bloombergIsoCountry": "US"
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "Canadian Dollar",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 0.01761,
+   "sedol1": null,
+   "ticker": "CAD",
+   "securityType": "CRNY",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 3464811.94,
+   "bloombergIsoCountry": "CA"
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "USD/CAD FWD 20260901",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 0.01447,
+   "sedol1": null,
+   "ticker": "USD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 2846894.86,
+   "bloombergIsoCountry": null
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "US Dollar",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 0.00906,
+   "sedol1": null,
+   "ticker": "USD",
+   "securityType": "CRNY",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 1782088.63,
+   "bloombergIsoCountry": "US"
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "CAD/USD FWD 20260901",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 0.00723,
+   "sedol1": null,
+   "ticker": "CAD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 1423447.43,
+   "bloombergIsoCountry": null
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "USD/CAD FWD 20260901",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 0.00723,
+   "sedol1": null,
+   "ticker": "USD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 1423447.43,
+   "bloombergIsoCountry": null
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "CAD/USD FWD 20260901",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 0.00723,
+   "sedol1": null,
+   "ticker": "CAD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 1423447.43,
+   "bloombergIsoCountry": null
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "CAD/USD FWD 20260916",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 0.00706,
+   "sedol1": null,
+   "ticker": "CAD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 1389071.38,
+   "bloombergIsoCountry": null
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "CAD/USD FWD 20260916",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": -0.00705,
+   "sedol1": null,
+   "ticker": "CAD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": -1387289.19,
+   "bloombergIsoCountry": null
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "CAD/USD FWD 20260901",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": -0.00723,
+   "sedol1": null,
+   "ticker": "CAD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": -1423447.43,
+   "bloombergIsoCountry": null
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "CAD/USD FWD 20260901",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": -0.00723,
+   "sedol1": null,
+   "ticker": "CAD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": -1423447.43,
+   "bloombergIsoCountry": null
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "CAD/USD FWD 20260901",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": -0.00723,
+   "sedol1": null,
+   "ticker": "CAD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": -1423447.43,
+   "bloombergIsoCountry": null
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "CAD/USD FWD 20260901",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": -0.01447,
+   "sedol1": null,
+   "ticker": "CAD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": -2846894.86,
+   "bloombergIsoCountry": null
+  }
+ ]
+}

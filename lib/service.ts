@@ -6,17 +6,21 @@ import { computePortfolioExposure } from "./analytics/portfolio";
 import { cached, HOUR } from "./cache";
 import { normaliseCountry } from "./identity";
 import { getFxRate, getQuote } from "./quotes";
+import { withEnrichment } from "./sources/enrich";
 import { getFundHoldings, resolveSymbol } from "./sources/resolve";
 import type { Holding, SourceAttempt } from "./types";
 
 export type Loaded<T> = { ok: true; data: T } | { ok: false; error: string; attempts: SourceAttempt[] };
+
+/** Fund loader for pages: SEC filings get tickers and sectors filled in from iShares reference funds. */
+const loadFund = withEnrichment(getFundHoldings);
 
 export async function loadLookThrough(symbol: string): Promise<Loaded<LookThrough>> {
   const sym = resolveSymbol(symbol);
   const key = `lt:${sym.ticker}:${sym.country}`;
   try {
     const lt = await cached(key, HOUR, async () => {
-      const result = await lookThrough(symbol, getFundHoldings);
+      const result = await lookThrough(symbol, loadFund);
       if (!result) {
         const r = await getFundHoldings(symbol);
         throw Object.assign(new Error(`Could not load holdings for ${sym.ticker}`), {

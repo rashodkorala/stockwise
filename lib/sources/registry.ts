@@ -21,7 +21,8 @@ const ca = (ticker: string, name: string, ishares?: IsharesProduct): RegistryEnt
   ticker,
   name,
   country: "CA",
-  sources: ishares !== undefined || name.startsWith("iShares") ? ["ishares-ca"] : [],
+  sources:
+    ishares !== undefined || name.startsWith("iShares") ? ["ishares-ca"] : name.startsWith("Vanguard") ? ["vanguard-ca"] : [],
   ishares,
 });
 
@@ -40,8 +41,9 @@ const us = (ticker: string, name: string, sources: SourceId[], ishares?: Ishares
  * iShares product IDs below were verified against the live screeners; funds
  * without one are discovered from the screener at runtime.
  *
- * Vanguard Canada and BMO have no free machine-readable holdings source wired
- * up yet; they resolve through the paid fallback (FMP_API_KEY).
+ * Vanguard Canada funds come from the GraphQL service behind vanguard.ca
+ * (lib/sources/vanguard.ts). BMO has no free source yet; it resolves through
+ * the paid fallback (FMP_API_KEY).
  */
 const ishares = (productId: string): IsharesProduct => ({ productId, slug: "fund" });
 
@@ -63,11 +65,18 @@ const ENTRIES: RegistryEntry[] = [
   ca("VEQT", "Vanguard All-Equity ETF Portfolio"),
   ca("VGRO", "Vanguard Growth ETF Portfolio"),
   ca("VBAL", "Vanguard Balanced ETF Portfolio"),
+  ca("VCNS", "Vanguard Conservative ETF Portfolio"),
   ca("VFV", "Vanguard S&P 500 Index ETF"),
-  ca("VCN", "Vanguard FTSE Canada All Cap Index ETF"),
+  ca("VSP", "Vanguard S&P 500 Index ETF (CAD-hedged)"),
   ca("VUN", "Vanguard U.S. Total Market Index ETF"),
+  ca("VUS", "Vanguard U.S. Total Market Index ETF (CAD-hedged)"),
+  ca("VCN", "Vanguard FTSE Canada All Cap Index ETF"),
+  ca("VCE", "Vanguard FTSE Canada Index ETF"),
+  ca("VDY", "Vanguard FTSE Canadian High Dividend Yield Index ETF"),
   ca("VIU", "Vanguard FTSE Developed All Cap ex North America Index ETF"),
   ca("VEE", "Vanguard FTSE Emerging Markets All Cap Index ETF"),
+  ca("VXC", "Vanguard FTSE Global All Cap ex Canada Index ETF"),
+  ca("VAB", "Vanguard Canadian Aggregate Bond Index ETF"),
 
   // BMO
   ca("ZEQT", "BMO All-Equity ETF"),

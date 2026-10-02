@@ -1,0 +1,102 @@
+{
+ "fundFullName": "Vanguard All-Equity ETF Portfolio",
+ "fundCurrency": "CAD",
+ "items": [
+  {
+   "issuerName": "Vanguard Morningstar US Total Market Index ETF",
+   "securityLongDescription": "Vanguard Morningstar US Total Market Index ETF",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 44.77273,
+   "sedol1": "BBX47V5",
+   "ticker": "VUN",
+   "securityType": "EQ.ETF",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 7627025497,
+   "bloombergIsoCountry": "CA"
+  },
+  {
+   "issuerName": "Vanguard FTSE Canada All Cap Index ETF",
+   "securityLongDescription": "Vanguard FTSE Canada All Cap Index ETF",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 30.58251,
+   "sedol1": "BBX4834",
+   "ticker": "VCN",
+   "securityType": "EQ.ETF",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 5209723974,
+   "bloombergIsoCountry": "CA"
+  },
+  {
+   "issuerName": "Vanguard FTSE Developed All Cap ex-North America Index ETF",
+   "securityLongDescription": "Vanguard FTSE Developed All Cap ex-North America Index ETF",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 17.62873,
+   "sedol1": "BYSQ5L3",
+   "ticker": "VIU",
+   "securityType": "EQ.ETF",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 3003051071.8,
+   "bloombergIsoCountry": "CA"
+  },
+  {
+   "issuerName": "Vanguard FTSE Emerging Markets All Cap Index ETF",
+   "securityLongDescription": "Vanguard FTSE Emerging Markets All Cap Index ETF",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 6.99723,
+   "sedol1": "BYZTVL7",
+   "ticker": "VEE",
+   "securityType": "EQ.ETF",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 1191975936.84,
+   "bloombergIsoCountry": "CA"
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "Canadian Dollar",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 0.01683,
+   "sedol1": null,
+   "ticker": "CAD",
+   "securityType": "CRNY",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 2866877.49,
+   "bloombergIsoCountry": "CA"
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "US Dollar",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 0.00197,
+   "sedol1": null,
+   "ticker": "USD",
+   "securityType": "CRNY",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 334760.52,
+   "bloombergIsoCountry": "US"
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "USD/CAD FWD 20260916",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": 0.00102,
+   "sedol1": null,
+   "ticker": "USD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": 174237.14,
+   "bloombergIsoCountry": null
+  },
+  {
+   "issuerName": null,
+   "securityLongDescription": "CAD/USD FWD 20260916",
+   "gicsSectorDescription": null,
+   "marketValuePercentage": -0.00102,
+   "sedol1": null,
+   "ticker": "CAD",
+   "securityType": "CT.FOREX",
+   "effectiveDate": "2026-08-31",
+   "marketValueBaseCurrency": -174353.5,
+   "bloombergIsoCountry": null
+  }
+ ]
+}

@@ -101,6 +101,19 @@ describe("SEC N-PORT", () => {
     expect(alphabet.sort()).toEqual(["ALPHABET INC-A", "ALPHABET INC-C"]);
   });
 
+  it("leaves out cash collateral reinvested from securities lending", () => {
+    const doc = `<edgarSubmission><formData><genInfo><seriesName>X</seriesName><repPdDate>2026-06-30</repPdDate></genInfo><invstOrSecs>
+      <invstOrSec><name>Apple Inc</name><title>APPLE INC</title><cusip>037833100</cusip><valUSD>990</valUSD><pctVal>99</pctVal><assetCat>EC</assetCat><invCountry>US</invCountry></invstOrSec>
+      <invstOrSec><name>Liquidity Fund</name><title>LIQUIDITY</title><cusip>922906300</cusip><valUSD>10</valUSD><pctVal>1</pctVal><assetCat>STIV</assetCat><issuerCat>RF</issuerCat>
+        <securityLending><cashCollateralCondition cashCollateralVal="6" isCashCollateral="Y"/></securityLending></invstOrSec>
+      <invstOrSec><name>Lent Fund</name><title>LENT</title><cusip>922906301</cusip><valUSD>5</valUSD><pctVal>0.5</pctVal><assetCat>STIV</assetCat>
+        <securityLending><cashCollateralCondition cashCollateralVal="5" isCashCollateral="Y"/></securityLending></invstOrSec>
+    </invstOrSecs></formData></edgarSubmission>`;
+    const f = parseNportXml(doc, "X");
+    expect(f.holdings.map((h) => h.name)).toEqual(["Apple Inc", "Liquidity Fund"]);
+    expect(f.holdings[1].weight).toBeCloseTo(0.004); // 1% minus the 60% that is collateral
+  });
+
   it("picks the newest NPORT-P accession from the Atom feed", () => {
     const atom = `<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom">
       <entry><category term="NPORT-P"/><content type="text/xml"><accession-number>0000036405-26-000480</accession-number><filing-type>NPORT-P</filing-type></content></entry>

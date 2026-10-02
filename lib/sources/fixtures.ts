@@ -3,6 +3,7 @@ import path from "node:path";
 import type { FundHoldings } from "../types";
 import { parseNportXml } from "./edgarNport";
 import { parseIsharesCsv } from "./ishares";
+import { mapVanguardPayload, type VanguardPayload } from "./vanguard";
 
 /**
  * Offline modes:
@@ -28,6 +29,8 @@ export async function loadFixtureHoldings(
     const region = country === "CA" ? "ca" : "us";
     return { ...parseIsharesCsv(csv, t, region, isKnownFund), source: "sample" };
   }
+  const json = await tryRead(`${t}.vanguard.json`);
+  if (json) return { ...mapVanguardPayload(JSON.parse(json) as VanguardPayload, t), source: "sample" };
   const doc = await tryRead(`${t}.xml`);
   if (doc) return { ...parseNportXml(doc, t), source: "sample" };
   throw new Error(`No sample data for ${t}`);
