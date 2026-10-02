@@ -111,3 +111,29 @@ describe("Vanguard Canada", () => {
     expect(lt.exposures.some((e) => e.assetClass === "fixed_income")).toBe(true);
   });
 });
+
+// Runs only when MASSIVE_API_KEY is set (free plan: prices and company details; ETF Global and currencies fall back).
+describe.skipIf(!process.env.MASSIVE_API_KEY)("Massive", () => {
+  it("prices US tickers from Massive with a trading date", async () => {
+    const q = await getQuote("AAPL", "US");
+    console.log(`AAPL ${q.price} ${q.currency} from ${q.source} as of ${q.asOf}`);
+    expect(q.source).toBe("massive");
+    expect(daysAgo(q.asOf!)).toBeLessThan(7);
+  });
+
+  it("names a single stock from its ticker overview", async () => {
+    const { massiveCompanyDetails } = await import("@/lib/sources/massive");
+    const d = await massiveCompanyDetails("AAPL");
+    expect(d.name).toMatch(/Apple/);
+    expect(d.sector).toBe("Information Technology");
+  });
+
+  it("reports which capabilities the plan includes, and still resolves US funds", async () => {
+    const { isDenied } = await import("@/lib/sources/massive");
+    const r = await getFundHoldings("VTI");
+    expect(r.ok).toBe(true);
+    console.log(`VTI holdings from ${r.ok ? r.fund.source : "-"}; ETF Global in plan: ${!(await isDenied("etf-global"))}`);
+    const fx = await getFxRate("USD", "CAD");
+    expect(fx).toBeGreaterThan(1);
+  });
+});

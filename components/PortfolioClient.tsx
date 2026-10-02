@@ -302,7 +302,10 @@ function Results({ view }: { view: PortfolioView }) {
                         {p.kind === "fund" ? <a href={`/etf/${encodeURIComponent(p.ticker)}`}>{p.ticker}</a> : p.ticker}
                       </td>
                       <td className="muted">{p.kind === "fund" ? "Fund" : "Stock"}</td>
-                      <td className="num">{p.price ? `${p.price.toFixed(2)} ${p.priceCurrency}` : "-"}</td>
+                      <td className="num" title={p.priceSource ? `Price from ${p.priceSource}` : undefined}>
+                        {p.price ? `${p.price.toFixed(2)} ${p.priceCurrency}` : "-"}
+                        {p.priceAsOf && <span className="muted"> · {p.priceAsOf.slice(5)}</span>}
+                      </td>
                       <td className="num">{money(p.value, view.baseCurrency)}</td>
                       <td className="num">{pct(view.total ? p.value / view.total : 0, 1)}</td>
                     </tr>
