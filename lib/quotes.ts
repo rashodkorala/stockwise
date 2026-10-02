@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { cached, HOUR } from "./cache";
-import { fetchJson } from "./http";
+import { fetchJson, HttpError } from "./http";
 import { fixturesEnabled } from "./sources/fixtures";
 import { fmpEnabled, fmpSymbol } from "./sources/fmp";
 
@@ -16,9 +16,16 @@ interface YahooChart {
 }
 
 async function yahooQuote(symbol: string): Promise<Quote> {
-  const data = await fetchJson<YahooChart>(
-    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=1d`,
-  );
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=1d`;
+  let data: YahooChart;
+  try {
+    data = await fetchJson<YahooChart>(url);
+  } catch (err) {
+    // Yahoo rate-limits bursts with 429; one short pause usually clears it.
+    if (!(err instanceof HttpError) || err.status !== 429) throw err;
+    await new Promise((r) => setTimeout(r, 1500));
+    data = await fetchJson<YahooChart>(url);
+  }
   const meta = data.chart?.result?.[0]?.meta;
   if (!meta?.regularMarketPrice) throw new Error(`No price for ${symbol}`);
   return { symbol, price: meta.regularMarketPrice, currency: meta.currency ?? "USD" };

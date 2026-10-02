@@ -10,6 +10,8 @@ export type AssetClass =
 export interface Holding {
   ticker?: string;
   name: string;
+  /** A second name used only for matching, such as an N-PORT filing's abbreviated title. */
+  altName?: string;
   isin?: string;
   cusip?: string;
   /** ISO 3166-1 alpha-2 country of risk, when the source provides it. */
@@ -33,6 +35,8 @@ export interface FundHoldings {
   currency?: string;
   source: SourceId;
   holdings: Holding[];
+  /** The issuer's own look-through of a fund of funds, when its file includes one. */
+  issuerLookThrough?: Holding[];
 }
 
 export interface SourceAttempt {

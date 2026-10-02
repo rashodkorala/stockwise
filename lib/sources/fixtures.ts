@@ -4,12 +4,16 @@ import type { FundHoldings } from "../types";
 import { parseNportXml } from "./edgarNport";
 import { parseIsharesCsv } from "./ishares";
 
-const DIR = path.join(process.cwd(), "fixtures", "holdings");
-
-/** Sample-data mode (STOCKWISE_FIXTURES=1) for demos, tests, and offline development. */
+/**
+ * Offline modes:
+ *   STOCKWISE_FIXTURES=1     committed excerpts of real files (fixtures/holdings), for tests and demos
+ *   STOCKWISE_FIXTURES=live  full snapshots from `npm run snapshot` (fixtures/live, not committed)
+ */
 export function fixturesEnabled(): boolean {
-  return process.env.STOCKWISE_FIXTURES === "1";
+  return process.env.STOCKWISE_FIXTURES === "1" || process.env.STOCKWISE_FIXTURES === "live";
 }
+
+const dir = () => path.join(process.cwd(), "fixtures", process.env.STOCKWISE_FIXTURES === "live" ? "live" : "holdings");
 
 export async function loadFixtureHoldings(
   ticker: string,
@@ -17,7 +21,7 @@ export async function loadFixtureHoldings(
   isKnownFund: (t: string) => boolean,
 ): Promise<FundHoldings> {
   const t = ticker.toUpperCase();
-  const tryRead = (file: string) => readFile(path.join(DIR, file), "utf8").catch(() => undefined);
+  const tryRead = (file: string) => readFile(path.join(dir(), file), "utf8").catch(() => undefined);
 
   const csv = await tryRead(`${t}.csv`);
   if (csv) {

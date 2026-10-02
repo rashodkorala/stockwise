@@ -72,8 +72,9 @@ export function parseNportXml(doc: string, ticker: string): FundHoldings {
     const isShort = text(s.payoffProfile) === "Short";
     holdings.push({
       ticker: attrValue(ids.ticker),
-      // The title carries the share class ("ALPHABET INC-CL A"); the name is the issuer.
-      name: text(s.title) ?? text(s.name) ?? "Unknown",
+      // The issuer name reads well; the abbreviated title carries the share class ("ALPHABET INC-A").
+      name: text(s.name) ?? text(s.title) ?? "Unknown",
+      altName: text(s.title),
       isin: attrValue(ids.isin),
       cusip: text(s.cusip),
       country: normaliseCountry(text(s.invCountry)),
@@ -130,19 +131,18 @@ export function latestNportAccession(atom: string): string | undefined {
   return undefined;
 }
 
+/** Locates the newest public N-PORT document for a fund ticker. */
+export async function nportDocumentUrl(ticker: string): Promise<string> {
+  const ref = (await seriesIndex()).get(ticker.toUpperCase());
+  if (!ref) throw new Error(`${ticker} is not a US-registered fund in SEC's ticker list`);
+  const atom = await fetchSec(
+    `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${ref.seriesId}&type=NPORT-P&dateb=&owner=include&count=10&output=atom`,
+  );
+  const acc = latestNportAccession(atom);
+  if (!acc) throw new Error(`No public N-PORT filing found for ${ticker}`);
+  return `https://www.sec.gov/Archives/edgar/data/${ref.cik}/${acc.replace(/-/g, "")}/primary_doc.xml`;
+}
+
 export function fetchNportHoldings(ticker: string): Promise<FundHoldings> {
-  return cached(`nport:${ticker}`, DAY, async () => {
-    const ref = (await seriesIndex()).get(ticker.toUpperCase());
-    if (!ref) throw new Error(`${ticker} is not a US-registered fund in SEC's ticker list`);
-    const atom = await fetchSec(
-      `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${ref.seriesId}&type=NPORT-P&dateb=&owner=include&count=10&output=atom`,
-    );
-    const acc = latestNportAccession(atom);
-    if (!acc) throw new Error(`No public N-PORT filing found for ${ticker}`);
-    const doc = await fetchSec(
-      `https://www.sec.gov/Archives/edgar/data/${ref.cik}/${acc.replace(/-/g, "")}/primary_doc.xml`,
-      60_000,
-    );
-    return parseNportXml(doc, ticker);
-  });
+  return cached(`nport:${ticker}`, DAY, async () => parseNportXml(await fetchSec(await nportDocumentUrl(ticker), 60_000), ticker));
 }

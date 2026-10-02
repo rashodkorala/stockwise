@@ -1,40 +1,51 @@
 iShares Core S&P Total U.S. Stock Market ETF
 Fund Holdings as of,"Sep 30, 2026"
 Inception Date,"Jan 20, 2004"
-Shares Outstanding,"1,234,567,890.00"
-Stock,-
-Bond,-
-Cash,-
-Other,-
- 
+Shares Outstanding,"576,800,000.00"
+Stock,"-"
+Bond,"-"
+Cash,"-"
+Other,"-"
+
 Ticker,Name,Sector,Asset Class,Market Value,Weight (%),Notional Value,Quantity,Price,Location,Exchange,Currency,FX Rate,Market Currency,Accrual Date
-NVDA,NVIDIA CORP,Information Technology,Equity,"4,890,000,000.00",6.52,"4,890,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-MSFT,MICROSOFT CORP,Information Technology,Equity,"4,485,000,000.00",5.98,"4,485,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-AAPL,APPLE INC,Information Technology,Equity,"4,432,500,000.00",5.91,"4,432,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-AMZN,AMAZON COM INC,Consumer Discretionary,Equity,"2,707,500,000.00",3.61,"2,707,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-META,META PLATFORMS INC CLASS A,Communication,Equity,"1,965,000,000.00",2.62,"1,965,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-AVGO,BROADCOM INC,Information Technology,Equity,"1,657,500,000.00",2.21,"1,657,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-GOOGL,ALPHABET INC CLASS A,Communication,Equity,"1,447,500,000.00",1.93,"1,447,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-TSLA,TESLA INC,Consumer Discretionary,Equity,"1,365,000,000.00",1.82,"1,365,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-GOOG,ALPHABET INC CLASS C,Communication,Equity,"1,185,000,000.00",1.58,"1,185,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-BRKB,BERKSHIRE HATHAWAY INC CLASS B,Financials,Equity,"1,117,500,000.00",1.49,"1,117,500,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-JPM,JPMORGAN CHASE & CO,Financials,Equity,"982,500,000.00",1.31,"982,500,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-LLY,ELI LILLY,Health Care,Equity,"810,000,000.00",1.08,"810,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-V,VISA INC CLASS A,Financials,Equity,"690,000,000.00",0.92,"690,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-XOM,EXXON MOBIL CORP,Energy,Equity,"607,500,000.00",0.81,"607,500,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-ORCL,ORACLE CORP,Information Technology,Equity,"585,000,000.00",0.78,"585,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-MA,MASTERCARD INC CLASS A,Financials,Equity,"555,000,000.00",0.74,"555,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-NFLX,NETFLIX INC,Communication,Equity,"532,500,000.00",0.71,"532,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-COST,COSTCO WHOLESALE CORP,Consumer Staples,Equity,"525,000,000.00",0.70,"525,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-WMT,WALMART INC,Consumer Staples,Equity,"517,500,000.00",0.69,"517,500,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-UNH,UNITEDHEALTH GROUP INC,Health Care,Equity,"435,000,000.00",0.58,"435,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-HD,HOME DEPOT INC,Consumer Discretionary,Equity,"427,500,000.00",0.57,"427,500,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-PG,PROCTER & GAMBLE,Consumer Staples,Equity,"412,500,000.00",0.55,"412,500,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-JNJ,JOHNSON & JOHNSON,Health Care,Equity,"405,000,000.00",0.54,"405,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-AMD,ADVANCED MICRO DEVICES INC,Information Technology,Equity,"360,000,000.00",0.48,"360,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-CRM,SALESFORCE INC,Information Technology,Equity,"285,000,000.00",0.38,"285,000,000.00","1,000.00",100.00,United States,New York Stock Exchange Inc.,USD,1.00,USD,-
-PLTR,PALANTIR TECHNOLOGIES INC CLASS A,Information Technology,Equity,"330,000,000.00",0.44,"330,000,000.00","1,000.00",100.00,United States,NASDAQ,USD,1.00,USD,-
-XTSLA,BLK CSH FND TREASURY SL AGENCY,Cash and/or Derivatives,Money Market,"157,500,000.00",0.21,"157,500,000.00","1,000.00",100.00,United States,-,USD,1.00,USD,-
-USD,USD CASH,Cash and/or Derivatives,Cash,"30,000,000.00",0.04,"30,000,000.00","1,000.00",100.00,United States,-,USD,1.00,USD,-
- 
-"The content contained herein is owned or licensed by BlackRock and/or its third-party information providers and is protected by applicable copyrights, trademarks, service marks, and/or other intellectual property rights."
+"NVDA","NVIDIA","Information Technology","Equity","7,152,468,329.64","7.45","7,152,468,329.64","31,318,278.00","228.38","United States","NASDAQ","USD","1.00","USD","-"
+"AAPL","APPLE","Information Technology","Equity","6,290,183,331.10","6.56","6,290,183,331.10","18,888,305.00","333.02","United States","NASDAQ","USD","1.00","USD","-"
+"MSFT","MICROSOFT","Information Technology","Equity","4,928,519,699.60","5.14","4,928,519,699.60","9,609,124.00","512.90","United States","NASDAQ","USD","1.00","USD","-"
+"AMZN","AMAZON.COM INC","Consumer Discretionary","Equity","3,165,176,685.00","3.30","3,165,176,685.00","12,703,900.00","249.15","United States","NASDAQ","USD","1.00","USD","-"
+"GOOGL","ALPHABET CLASS A","Communication","Equity","2,613,142,054.16","2.72","2,613,142,054.16","7,594,577.00","344.08","United States","NASDAQ","USD","1.00","USD","-"
+"AVGO","BROADCOM INC","Information Technology","Equity","2,162,360,062.03","2.25","2,162,360,062.03","6,157,237.00","351.19","United States","NASDAQ","USD","1.00","USD","-"
+"GOOG","ALPHABET CLASS C","Communication","Equity","2,095,619,148.00","2.18","2,095,619,148.00","6,150,200.00","340.74","United States","NASDAQ","USD","1.00","USD","-"
+"META","META PLATFORMS CLASS A","Communication","Equity","2,069,666,620.72","2.16","2,069,666,620.72","2,854,004.00","725.18","United States","NASDAQ","USD","1.00","USD","-"
+"MU","MICRON TECHNOLOGY","Information Technology","Equity","1,556,803,119.96","1.62","1,556,803,119.96","1,461,636.00","1,065.11","United States","NASDAQ","USD","1.00","USD","-"
+"TSLA","TESLA INC","Consumer Discretionary","Equity","1,294,606,600.92","1.35","1,294,606,600.92","3,648,732.00","354.81","United States","NASDAQ","USD","1.00","USD","-"
+"AMD","ADVANCED MICRO DEVICES","Information Technology","Equity","1,292,651,327.04","1.35","1,292,651,327.04","2,113,004.00","611.76","United States","NASDAQ","USD","1.00","USD","-"
+"BRK B","BERKSHIRE HATHAWAY INC CLASS B","Financials","Equity","1,199,089,493.40","1.25","1,199,089,493.40","2,408,052.00","497.95","United States","NYSE","USD","1.00","USD","-"
+"LLY","ELI LILLY","Health Care","Equity","1,198,103,114.32","1.25","1,198,103,114.32","1,035,454.00","1,157.08","United States","NYSE","USD","1.00","USD","-"
+"JPM","JPMORGAN CHASE & CO","Financials","Equity","1,137,796,160.11","1.19","1,137,796,160.11","3,439,217.00","330.83","United States","NYSE","USD","1.00","USD","-"
+"XOM","EXXONMOBIL HOLDINGS CORP","Energy","Equity","865,833,906.00","0.90","865,833,906.00","5,320,024.00","162.75","United States","NYSE","USD","1.00","USD","-"
+"JNJ","JOHNSON & JOHNSON","Health Care","Equity","824,994,171.82","0.86","824,994,171.82","3,116,243.00","264.74","United States","NYSE","USD","1.00","USD","-"
+"V","VISA CLASS A","Financials","Equity","791,608,301.96","0.83","791,608,301.96","2,203,012.00","359.33","United States","NYSE","USD","1.00","USD","-"
+"INTC","INTEL CORPORATION","Information Technology","Equity","773,261,048.45","0.81","773,261,048.45","6,431,515.00","120.23","United States","NASDAQ","USD","1.00","USD","-"
+"WMT","WALMART","Consumer Staples","Equity","599,818,549.92","0.63","599,818,549.92","5,771,926.00","103.92","United States","NASDAQ","USD","1.00","USD","-"
+"ABBV","ABBVIE","Health Care","Equity","598,427,933.04","0.62","598,427,933.04","2,287,656.00","261.59","United States","NYSE","USD","1.00","USD","-"
+"MA","MASTERCARD CLASS A","Financials","Equity","576,166,481.01","0.60","576,166,481.01","1,044,783.00","551.47","United States","NYSE","USD","1.00","USD","-"
+"PLTR","PALANTIR TECHNOLOGIES CLASS A","Information Technology","Equity","556,897,418.25","0.58","556,897,418.25","2,977,265.00","187.05","United States","NASDAQ","USD","1.00","USD","-"
+"CSCO","CISCO SYSTEMS INC","Information Technology","Equity","548,869,840.37","0.57","548,869,840.37","5,099,599.00","107.63","United States","NASDAQ","USD","1.00","USD","-"
+"LRCX","LAM RESEARCH","Information Technology","Equity","531,903,681.40","0.55","531,903,681.40","1,619,140.00","328.51","United States","NASDAQ","USD","1.00","USD","-"
+"AMAT","APPLIED MATERIAL INC","Information Technology","Equity","525,459,314.16","0.55","525,459,314.16","1,027,532.00","511.38","United States","NASDAQ","USD","1.00","USD","-"
+"COST","COSTCO WHOLESALE CORP","Consumer Staples","Equity","522,207,437.60","0.54","522,207,437.60","573,640.00","910.34","United States","NASDAQ","USD","1.00","USD","-"
+"CVX","CHEVRON","Energy","Equity","521,218,660.86","0.54","521,218,660.86","2,552,366.00","204.21","United States","NYSE","USD","1.00","USD","-"
+"CAT","CATERPILLAR INC","Industrials","Equity","482,268,432.27","0.50","482,268,432.27","594,813.00","810.79","United States","NYSE","USD","1.00","USD","-"
+"MRK","MERCK & CO INC","Health Care","Equity","464,349,729.80","0.48","464,349,729.80","3,195,580.00","145.31","United States","NYSE","USD","1.00","USD","-"
+"BAC","BANK OF AMERICA","Financials","Equity","458,528,498.41","0.48","458,528,498.41","8,424,187.00","54.43","United States","NYSE","USD","1.00","USD","-"
+"PG","PROCTER & GAMBLE","Consumer Staples","Equity","436,756,280.96","0.46","436,756,280.96","3,006,307.00","145.28","United States","NYSE","USD","1.00","USD","-"
+"KO","COCA-COLA","Consumer Staples","Equity","430,458,964.80","0.45","430,458,964.80","5,000,685.00","86.08","United States","NYSE","USD","1.00","USD","-"
+"UNH","UNITEDHEALTH GROUP","Health Care","Equity","426,467,303.64","0.44","426,467,303.64","1,161,783.00","367.08","United States","NYSE","USD","1.00","USD","-"
+"GE","GE AEROSPACE","Industrials","Equity","419,245,889.81","0.44","419,245,889.81","1,342,489.00","312.29","United States","NYSE","USD","1.00","USD","-"
+"PANW","PALO ALTO NETWORKS","Information Technology","Equity","418,963,792.31","0.44","418,963,792.31","1,054,501.00","397.31","United States","NASDAQ","USD","1.00","USD","-"
+"PM","PHILIP MORRIS INTERNATIONAL","Consumer Staples","Equity","384,814,863.16","0.40","384,814,863.16","2,016,638.00","190.82","United States","NYSE","USD","1.00","USD","-"
+"NFLX","NETFLIX","Communication","Equity","375,013,934.40","0.39","375,013,934.40","5,389,680.00","69.58","United States","NASDAQ","USD","1.00","USD","-"
+"HD","HOME DEPOT","Consumer Discretionary","Equity","367,091,102.52","0.38","367,091,102.52","1,290,348.00","284.49","United States","NYSE","USD","1.00","USD","-"
+"CRWD","CROWDSTRIKE HOLDINGS CLASS A","Information Technology","Equity","349,032,633.00","0.36","349,032,633.00","1,318,348.00","264.75","United States","NASDAQ","USD","1.00","USD","-"
+"GS","GOLDMAN SACHS GROUP","Financials","Equity","339,070,173.84","0.35","339,070,173.84","376,594.00","900.36","United States","NYSE","USD","1.00","USD","-"
+

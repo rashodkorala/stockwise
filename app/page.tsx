@@ -3,7 +3,7 @@ import { registryEntries } from "@/lib/sources/registry";
 
 const COMMANDS: [string, string][] = [
   ["XEQT", "X-ray a fund: every company inside it, looking through funds of funds"],
-  ["XEQT VEQT OVLP", "Overlap between two funds: shared holdings and what is unique to each"],
+  ["ITOT VTI OVLP", "Overlap between two funds: shared holdings and what is unique to each"],
   ["PORT", "Your portfolio: total exposure to each company across all your holdings"],
   ["HELP", "This screen"],
 ];
@@ -39,8 +39,11 @@ export default function Home() {
           <Link className="btn-ghost" href="/etf/XEQT">
             XEQT look-through
           </Link>
-          <Link className="btn-ghost" href="/compare?a=XEQT&b=VEQT">
-            XEQT vs VEQT
+          <Link className="btn-ghost" href="/compare?a=ITOT&b=VTI">
+            ITOT vs VTI (iShares vs Vanguard)
+          </Link>
+          <Link className="btn-ghost" href="/compare?a=XIC&b=XIU">
+            XIC vs XIU
           </Link>
           <Link className="btn-ghost" href="/etf/VTI">
             VTI (SEC N-PORT)

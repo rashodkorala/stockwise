@@ -7,20 +7,18 @@ import type { IsharesProduct } from "./registry";
 
 type Region = "us" | "ca";
 
-const SITES: Record<Region, { origin: string; productPath: string; ajax: string; screener: string }> = {
+const SITES: Record<Region, { origin: string; productPath: string; screener: string }> = {
   us: {
     origin: "https://www.ishares.com",
     productPath: "/us/products",
-    ajax: "1467271812596.ajax",
     screener:
       "https://www.ishares.com/us/product-screener/product-screener-v3.1.jsn?dcrPath=/templatedata/config/product-screener-v3/data/en/us-ishares/ishares-product-screener-backend-config&siteEntryPassthrough=true",
   },
   ca: {
     origin: "https://www.blackrock.com",
     productPath: "/ca/investors/en/products",
-    ajax: "1464253357814.ajax",
     screener:
-      "https://www.blackrock.com/ca/investors/en/product-screener/product-screener-v3.jsn?dcrPath=/templatedata/config/product-screener-v3/data/en/ca/product-screener-backend-config&siteEntryPassthrough=true",
+      "https://www.blackrock.com/ca/investors/en/product-screener/product-screener-v3.1.jsn?dcrPath=/templatedata/config/product-screener-v3/data/en/ca-one/product-screener-backend-config&siteEntryPassthrough=true",
   },
 };
 
@@ -63,7 +61,7 @@ function classify(assetClass: string | undefined, name: string, isKnownFund: (t:
   const ac = (assetClass ?? "").toLowerCase();
   let cls: AssetClass = "other";
   if (ac.includes("money market") || ac.includes("cash")) cls = "cash";
-  else if (ac.includes("future") || ac.includes("swap") || ac.includes("forward") || ac.includes("option"))
+  else if (ac === "fx" || ac.includes("future") || ac.includes("swap") || ac.includes("forward") || ac.includes("option"))
     cls = "derivative";
   else if (ac.includes("fixed income") || ac.includes("bond")) cls = "fixed_income";
   else if (ac.includes("fund") || ac === "etf") cls = "fund";
@@ -74,28 +72,10 @@ function classify(assetClass: string | undefined, name: string, isKnownFund: (t:
   return { cls, isFund: cls === "fund" };
 }
 
-/**
- * Parses an iShares (US) or BlackRock Canada holdings CSV: a few metadata rows,
- * a header row starting with "Ticker", the holdings, then legal boilerplate.
- */
-export function parseIsharesCsv(
-  csv: string,
-  ticker: string,
-  region: Region,
-  isKnownFund: (ticker: string) => boolean = () => false,
-): FundHoldings {
-  const { data } = Papa.parse<string[]>(csv.replace(/^﻿/, ""), { skipEmptyLines: false });
-  const rows = data.map((r) => r.map((c) => (c ?? "").trim()));
+const isHeader = (r: string[]) => r[0] === "Ticker" || r[0] === "Issuer Ticker";
 
-  const headerIdx = rows.findIndex((r) => r[0] === "Ticker" || r[0] === "Issuer Ticker" || r.includes("Weight (%)"));
-  if (headerIdx < 0) throw new Error("No holdings table found in iShares file");
-
-  let asOf: string | undefined;
-  for (const r of rows.slice(0, headerIdx)) {
-    if (/holdings as of/i.test(r[0] ?? "")) asOf = parseIsharesDate(r[1] ?? "");
-  }
-  const name = rows[0]?.[0] && !/as of/i.test(rows[0][0]) ? rows[0][0] : ticker;
-
+/** Reads one holdings table starting at its header row; stops at the first blank or short row. */
+function parseTable(rows: string[][], headerIdx: number, isKnownFund: (t: string) => boolean): { holdings: Holding[]; end: number } {
   const header = rows[headerIdx];
   const col = (field: string) => {
     for (const alias of COLUMN_ALIASES[field]) {
@@ -109,7 +89,9 @@ export function parseIsharesCsv(
   const get = (r: string[], field: string) => (idx[field] >= 0 ? r[idx[field]] : undefined);
 
   const holdings: Holding[] = [];
-  for (const r of rows.slice(headerIdx + 1)) {
+  let i = headerIdx + 1;
+  for (; i < rows.length; i++) {
+    const r = rows[i];
     if (r.length < header.length / 2 || !r[idx.name]) break;
     const weightPct = parseNumber(get(r, "weight"));
     if (weightPct === undefined) continue;
@@ -129,7 +111,56 @@ export function parseIsharesCsv(
       isFund,
     });
   }
+  return { holdings: weightsFromMarketValue(holdings), end: i };
+}
+
+/**
+ * The "Weight (%)" column is rounded to two decimals, so a fund's thousands of
+ * smallest holdings read 0.00% and the total falls short by a percent or more.
+ * Market values are exact, so each row's weight is its market value times the
+ * fund's weight-per-dollar, measured on rows of at least 0.1% where rounding is
+ * negligible. This also works on files that list only part of a fund.
+ */
+function weightsFromMarketValue(holdings: Holding[]): Holding[] {
+  const big = holdings.filter((h) => Math.abs(h.weight) >= 0.001 && (h.marketValue ?? 0) > 0);
+  const value = big.reduce((s, h) => s + h.marketValue!, 0);
+  const weight = big.reduce((s, h) => s + h.weight, 0);
+  if (!(value > 0) || !(weight > 0)) return holdings;
+  const perDollar = weight / value;
+  return holdings.map((h) => (h.marketValue === undefined ? h : { ...h, weight: h.marketValue * perDollar }));
+}
+
+
+/**
+ * Parses an iShares (US) or BlackRock Canada holdings CSV: optional fund-name
+ * and metadata rows, a header row starting with "Ticker", the holdings, then
+ * legal boilerplate. BlackRock Canada files for funds of funds add a second
+ * table with the issuer's own look-through, returned as `issuerLookThrough`.
+ */
+export function parseIsharesCsv(
+  csv: string,
+  ticker: string,
+  region: Region,
+  isKnownFund: (ticker: string) => boolean = () => false,
+): FundHoldings {
+  const { data } = Papa.parse<string[]>(csv.replace(/^\uFEFF/, ""), { skipEmptyLines: false });
+  const rows = data.map((r) => r.map((c) => (c ?? "").replace(/^\uFEFF/, "").trim()));
+
+  const headerIdx = rows.findIndex(isHeader);
+  if (headerIdx < 0) throw new Error("No holdings table found in iShares file");
+
+  let asOf: string | undefined;
+  for (const r of rows.slice(0, headerIdx)) {
+    if (/holdings as of/i.test(r[0] ?? "")) asOf = parseIsharesDate(r[1] ?? "");
+  }
+  // US files open with the fund name; Canadian files go straight to "Fund Holdings as of".
+  const name = rows[0]?.[0] && !/as of/i.test(rows[0][0]) ? rows[0][0] : ticker;
+
+  const { holdings, end } = parseTable(rows, headerIdx, isKnownFund);
   if (holdings.length === 0) throw new Error("iShares file contained no holdings");
+
+  const nextHeader = rows.findIndex((r, i) => i > end && isHeader(r));
+  const issuerLookThrough = nextHeader > 0 ? parseTable(rows, nextHeader, () => false).holdings : undefined;
 
   return {
     ticker,
@@ -138,6 +169,7 @@ export function parseIsharesCsv(
     currency: region === "ca" ? "CAD" : "USD",
     source: region === "ca" ? "ishares-ca" : "ishares-us",
     holdings,
+    ...(issuerLookThrough?.length ? { issuerLookThrough } : {}),
   };
 }
 
@@ -161,23 +193,28 @@ export function findInScreener(feed: unknown, ticker: string): IsharesProduct | 
     const page = obj.productPageUrl ?? obj.productUrl;
     if (typeof t === "string" && t.toUpperCase() === want && typeof page === "string") {
       const m = page.match(/\/products\/(\d+)\/([^/?#]+)/);
-      if (m) return { productId: m[1], slug: m[2] };
+      const name = typeof obj.fundName === "string" ? obj.fundName : undefined;
+      if (m) return { productId: m[1], slug: m[2], name };
     }
     stack.push(...Object.values(obj));
   }
   return undefined;
 }
 
-async function discover(region: Region, ticker: string): Promise<IsharesProduct> {
+export async function discoverIshares(region: Region, ticker: string): Promise<IsharesProduct> {
   const feed = await cached(`ishares-screener:${region}`, DAY, () => fetchJson<unknown>(SITES[region].screener));
   const product = findInScreener(feed, ticker);
   if (!product) throw new Error(`${ticker} is not in the iShares ${region.toUpperCase()} product list`);
   return product;
 }
 
-function holdingsUrl(region: Region, ticker: string, p: IsharesProduct): string {
+/** Both sites ignore the slug segment, but it must be present. */
+export function holdingsUrl(region: Region, ticker: string, p: IsharesProduct): string {
   const s = SITES[region];
-  return `${s.origin}${s.productPath}/${p.productId}/${p.slug}/${s.ajax}?fileType=csv&fileName=${ticker}_holdings&dataType=fund`;
+  const base = `${s.origin}${s.productPath}/${p.productId}/${p.slug || "fund"}`;
+  return region === "us"
+    ? `${base}/latest-holdings.csv`
+    : `${base}/1464253357814.ajax?fileType=csv&fileName=${ticker}_holdings&dataType=fund`;
 }
 
 export function fetchIsharesHoldings(
@@ -187,8 +224,10 @@ export function fetchIsharesHoldings(
   isKnownFund: (ticker: string) => boolean,
 ): Promise<FundHoldings> {
   return cached(`ishares:${region}:${ticker}`, 12 * HOUR, async () => {
-    const attempt = async (p: IsharesProduct) =>
-      parseIsharesCsv(await fetchText(holdingsUrl(region, ticker, p)), ticker, region, isKnownFund);
+    const attempt = async (p: IsharesProduct) => {
+      const fund = parseIsharesCsv(await fetchText(holdingsUrl(region, ticker, p)), ticker, region, isKnownFund);
+      return fund.name === ticker && p.name ? { ...fund, name: p.name } : fund;
+    };
     if (known) {
       try {
         return await attempt(known);
@@ -196,6 +235,6 @@ export function fetchIsharesHoldings(
         // Product IDs occasionally move; fall through to discovery.
       }
     }
-    return attempt(await discover(region, ticker));
+    return attempt(await discoverIshares(region, ticker));
   });
 }

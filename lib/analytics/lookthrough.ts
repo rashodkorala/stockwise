@@ -45,6 +45,8 @@ export interface LookThrough {
   /** Every fund that was loaded, with its own as-of date and source. */
   funds: { ticker: string; name: string; asOf?: string; source?: SourceId; error?: string }[];
   directCount: number;
+  /** The root fund issuer's own look-through, when its file publishes one. */
+  issuerLookThrough?: Holding[];
 }
 
 export type FundLoader = (symbol: string) => Promise<HoldingsResult>;
@@ -56,7 +58,17 @@ function childSymbol(h: Holding): string | undefined {
   return h.country === "CA" ? `${t}.TO` : t;
 }
 
-export async function lookThrough(rootSymbol: string, load: FundLoader, maxDepth = 3): Promise<LookThrough | null> {
+/**
+ * Funds below this weight in the root are kept as a single holding instead of
+ * being expanded: IEFA's 0.01% slice of VEA would otherwise pull in a 3 MB filing.
+ */
+export const MIN_EXPAND_WEIGHT = 0.0005;
+
+export async function lookThrough(
+  rootSymbol: string,
+  load: FundLoader,
+  { maxDepth = 3, minExpandWeight = MIN_EXPAND_WEIGHT } = {},
+): Promise<LookThrough | null> {
   const rootResult = await load(rootSymbol);
   if (!rootResult.ok) return null;
   const root = rootResult.fund;
@@ -80,7 +92,7 @@ export async function lookThrough(rootSymbol: string, load: FundLoader, maxDepth
         const w = weight * h.weight;
         const sym = h.isFund ? childSymbol(h) : undefined;
         const ticker = normaliseTicker(h.ticker);
-        if (sym && ticker && depth < maxDepth && !here.includes(ticker)) {
+        if (sym && ticker && depth < maxDepth && !here.includes(ticker) && Math.abs(w) >= minExpandWeight) {
           const child = await load(sym);
           if (child.ok) {
             node.funds.push(await expand(child.fund, w, here, depth + 1));
@@ -111,6 +123,7 @@ export async function lookThrough(rootSymbol: string, load: FundLoader, maxDepth
     exposures: aggregate(leaves),
     funds,
     directCount: root.holdings.length,
+    issuerLookThrough: root.issuerLookThrough,
   };
 }
 
@@ -123,7 +136,7 @@ export function collectLeaves(node: FundNode): Leaf[] {
 function entityId(h: Holding): string {
   const ids = identifiersFor(h);
   const tk = ids.strong.find((s) => s.kind === "tk");
-  return tk?.value ?? ids.strong[0]?.value ?? ids.name ?? h.name;
+  return tk?.value ?? ids.strong[0]?.value ?? ids.names[0] ?? h.name;
 }
 
 /** Merges leaves that are the same security into one exposure each, largest first. */
@@ -138,7 +151,10 @@ export function aggregate(leaves: Leaf[]): Exposure[] {
 
   const out: Exposure[] = [];
   byGroup.forEach((list) => {
-    const lead = list.find((l) => l.holding.ticker) ?? list[0];
+    // Label each security from its heaviest rows, so one odd row (a stray
+    // country code in a minor fund's filing) cannot relabel it.
+    const heaviest = [...list].sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight));
+    const lead = heaviest.find((l) => l.holding.ticker) ?? heaviest[0];
     const viaMap = new Map<string, { path: string[]; weight: number }>();
     for (const l of list) {
       const key = l.path.join(">");
@@ -148,10 +164,11 @@ export function aggregate(leaves: Leaf[]): Exposure[] {
     }
     out.push({
       id: entityId(lead.holding),
-      name: lead.holding.name,
+      // A position entered by ticker has no real name; borrow one from a fund's row.
+      name: heaviest.find((l) => l.holding.name !== l.holding.ticker)?.holding.name ?? lead.holding.name,
       ticker: lead.holding.ticker,
-      country: list.find((l) => l.holding.country)?.holding.country,
-      sector: list.find((l) => l.holding.sector)?.holding.sector,
+      country: heaviest.find((l) => l.holding.country)?.holding.country,
+      sector: heaviest.find((l) => l.holding.sector)?.holding.sector,
       assetClass: lead.holding.assetClass,
       weight: list.reduce((s, l) => s + l.weight, 0),
       via: Array.from(viaMap.values()).sort((a, b) => b.weight - a.weight),

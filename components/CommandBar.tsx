@@ -45,7 +45,7 @@ export default function CommandBar() {
         ref={input}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="XEQT · XEQT VEQT OVLP · PORT   (press / to focus)"
+        placeholder="XEQT · ITOT VTI OVLP · PORT   (press / to focus)"
         aria-label="Command"
         autoComplete="off"
         spellCheck={false}

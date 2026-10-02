@@ -48,6 +48,15 @@ export default async function EtfPage({ params }: { params: { ticker: string } }
         </div>
       )}
 
+      {v.issuerCheck && (
+        <div className={v.issuerCheck.maxDiff <= 0.001 ? "notice" : "notice error"}>
+          Cross-check: the issuer publishes its own look-through ({v.issuerCheck.issuerCount.toLocaleString()} securities). Of its{" "}
+          {v.issuerCheck.compared} largest names we found {v.issuerCheck.found}, with weights differing by at most{" "}
+          {(v.issuerCheck.maxDiff * 100).toFixed(3)} pp
+          {v.issuerCheck.worst && v.issuerCheck.maxDiff > 0.0001 ? ` (largest gap: ${v.issuerCheck.worst.ticker})` : ""}.
+        </div>
+      )}
+
       <section className="panel">
         <div className="panel-body stats">
           <div>

@@ -1,4 +1,5 @@
 import "server-only";
+import { crossCheck, type CrossCheck } from "./analytics/crosscheck";
 import { breakdown, lookThrough, type Exposure, type FundNode, type LookThrough } from "./analytics/lookthrough";
 import { computeOverlap, type Overlap, type OverlapRow } from "./analytics/overlap";
 import { computePortfolioExposure } from "./analytics/portfolio";
@@ -65,6 +66,8 @@ export interface EtfView {
   sectors: { label: string; weight: number }[];
   countries: { label: string; weight: number }[];
   treemap: TreemapNode;
+  /** Comparison with the issuer's own look-through, when one is published. */
+  issuerCheck?: CrossCheck;
 }
 
 const toRow = (e: Exposure): ExposureRow => ({
@@ -123,6 +126,7 @@ export function toEtfView(lt: LookThrough, limit = 1000): EtfView {
     sectors: breakdown(lt.exposures.filter((e) => e.assetClass === "equity"), "sector"),
     countries: breakdown(lt.exposures.filter((e) => e.assetClass === "equity"), "country"),
     treemap: treemapOf(lt.tree, 30),
+    issuerCheck: lt.issuerLookThrough ? crossCheck(lt.exposures, lt.issuerLookThrough) : undefined,
   };
 }
 

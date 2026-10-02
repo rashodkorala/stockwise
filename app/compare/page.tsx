@@ -12,7 +12,7 @@ function CompareForm({ a = "", b = "" }: { a?: string; b?: string }) {
     <form action="/compare" className="toolbar">
       <input className="input" name="a" defaultValue={a} placeholder="XEQT" aria-label="First ticker" required />
       <span className="muted">vs</span>
-      <input className="input" name="b" defaultValue={b} placeholder="VEQT" aria-label="Second ticker" required />
+      <input className="input" name="b" defaultValue={b} placeholder="VTI" aria-label="Second ticker" required />
       <button className="btn" type="submit">
         OVLP
       </button>

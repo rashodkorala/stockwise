@@ -7,7 +7,7 @@ const TICKER = /^[A-Z0-9][A-Z0-9.:\-]{0,11}$/;
 /**
  * Parses Bloomberg-style mnemonics:
  *   XEQT            X-ray a fund (also "XEQT GO")
- *   XEQT VEQT OVLP  compare two funds (also "OVLP XEQT VEQT", "XEQT VS VEQT")
+ *   ITOT VTI OVLP   compare two funds (also "OVLP ITOT VTI", "ITOT VS VTI")
  *   PORT            portfolio
  *   HELP            command list
  */
@@ -23,7 +23,7 @@ export function parseCommand(input: string): Command | null {
   const isOverlap = words.includes("OVLP") || words.includes("VS");
   if (isOverlap) {
     if (rest.length !== 2 || !rest.every((t) => TICKER.test(t))) {
-      return { kind: "message", text: "Overlap takes two tickers: XEQT VEQT OVLP" };
+      return { kind: "message", text: "Overlap takes two tickers: ITOT VTI OVLP" };
     }
     return { kind: "navigate", href: `/compare?a=${encodeURIComponent(rest[0])}&b=${encodeURIComponent(rest[1])}` };
   }

@@ -13,21 +13,25 @@ const loaderFor = (funds: FundHoldings[]) => async (sym: string): Promise<Holdin
 };
 
 describe("lookThrough", () => {
-  it("expands XEQT through its four underlying funds", async () => {
+  it("expands XEQT through XTOT, ITOT, XIC, XEF, XEC and their US slices", async () => {
     const lt = (await lookThrough("XEQT", getFundHoldings))!;
-    expect(lt.tree.funds.map((f) => f.ticker).sort()).toEqual(["ITOT", "XEC", "XEF", "XIC"]);
-    const apple = lt.exposures.find((e) => e.ticker === "AAPL")!;
-    expect(apple.weight).toBeCloseTo(0.4481 * 0.0591, 6);
-    expect(apple.via[0].path).toEqual(["XEQT", "ITOT"]);
-    expect(lt.exposures.find((e) => e.ticker === "RY")!.weight).toBeCloseTo(0.2512 * 0.0661, 6);
+    expect(lt.name).toBe("iShares Core Equity ETF Portfolio");
+    expect(lt.tree.funds.map((f) => f.ticker).sort()).toEqual(["ITOT", "XEC", "XEF", "XIC", "XTOT"]);
     expect(lt.funds.every((f) => !f.error)).toBe(true);
+    expect(new Set(lt.funds.map((f) => f.ticker))).toEqual(new Set(["XEQT", "XTOT", "ITOT", "XIC", "XEF", "IEFA", "XEC", "IEMG"]));
+
+    // Apple arrives twice: XEQT > XTOT > ITOT and XEQT > ITOT.
+    const apple = lt.exposures.find((e) => e.ticker === "AAPL")!;
+    // Weights come from exact market values, so they differ from the rounded CSV column in the fifth decimal.
+    expect(apple.weight).toBeCloseTo(0.3078 * 0.9992 * 0.0656 + 0.1499 * 0.0656, 4);
+    expect(apple.via.map((v) => v.path.join(">")).sort()).toEqual(["XEQT>ITOT", "XEQT>XTOT>ITOT"]);
+    expect(lt.exposures.find((e) => e.ticker === "RY")!.weight).toBeCloseTo(0.2489 * 0.0773, 4);
   });
 
-  it("goes three levels deep (VEQT > VUN > VTI) across file formats", async () => {
-    const lt = (await lookThrough("VEQT", getFundHoldings))!;
-    const nvda = lt.exposures.find((e) => e.ticker === "NVDA")!;
-    expect(nvda.via[0].path).toEqual(["VEQT", "VUN", "VTI"]);
-    expect(nvda.weight).toBeCloseTo(0.4452 * 0.999 * 0.0641, 6);
+  it("goes one level deeper where a Canadian fund holds its US twin (XEF > IEFA)", async () => {
+    const lt = (await lookThrough("XEF", getFundHoldings))!;
+    const viaIefa = lt.leaves.filter((l) => l.path.join(">") === "XEF>IEFA");
+    expect(viaIefa.length).toBeGreaterThan(10);
   });
 
   it("guards against cycles and keeps unloadable funds as leaves", async () => {
@@ -79,12 +83,13 @@ describe("computeOverlap", () => {
     expect(o.aInB).toBeCloseTo(0.6);
   });
 
-  it("finds substantial overlap between XEQT and VEQT, matching N-PORT rows to iShares rows", async () => {
-    const o = computeOverlap((await lookThrough("XEQT", getFundHoldings))!, (await lookThrough("VEQT", getFundHoldings))!);
-    expect(o.overlap).toBeGreaterThan(0.5);
+  it("matches iShares rows to N-PORT rows on real data (ITOT vs VTI)", async () => {
+    const o = computeOverlap((await lookThrough("ITOT", getFundHoldings))!, (await lookThrough("VTI", getFundHoldings))!);
     const tickers = o.shared.map((s) => s.ticker);
-    expect(tickers).toEqual(expect.arrayContaining(["AAPL", "MSFT", "GOOGL", "GOOG", "BRKB", "RY", "ASML"]));
-    expect(o.onlyB.map((s) => s.ticker ?? s.name)).toContain("Super Micro Computer Inc");
+    expect(tickers).toEqual(expect.arrayContaining(["NVDA", "AAPL", "MSFT", "AMZN", "GOOGL", "GOOG", "META", "AVGO", "TSLA", "LLY", "JPM", "BRK B"]));
+    // Both excerpts list only the top 40 names, so most of each side is shared.
+    expect(o.overlap).toBeGreaterThan(0.8);
+    expect(new Set(tickers).size).toBe(tickers.length);
   });
 });
 
@@ -93,22 +98,23 @@ describe("computePortfolioExposure", () => {
     const xeqt = (await lookThrough("XEQT", getFundHoldings))!;
     const result = computePortfolioExposure([
       { ticker: "XEQT", value: 9000, fund: xeqt },
-      { ticker: "AAPL", value: 1000, security: h({ ticker: "AAPL", name: "APPLE INC", country: "US" }) },
+      { ticker: "AAPL", value: 1000, security: h({ ticker: "AAPL", name: "AAPL", country: "US" }) },
     ]);
     expect(result.total).toBe(10000);
     const apple = result.exposures.find((e) => e.ticker === "AAPL")!;
-    expect(apple.value).toBeCloseTo(1000 + 9000 * 0.4481 * 0.0591, 2);
+    expect(apple.value).toBeCloseTo(1000 + 9000 * (0.3078 * 0.9992 + 0.1499) * 0.0656, 0);
     expect(result.exposures[0].ticker).toBe("AAPL");
+    expect(apple.name).toBe("APPLE");
   });
 
   it("builds a symmetric overlap matrix for fund positions", async () => {
     const xeqt = (await lookThrough("XEQT", getFundHoldings))!;
-    const veqt = (await lookThrough("VEQT", getFundHoldings))!;
+    const vti = (await lookThrough("VTI", getFundHoldings))!;
     const { overlapMatrix } = computePortfolioExposure([
       { ticker: "XEQT", value: 1, fund: xeqt },
-      { ticker: "VEQT", value: 1, fund: veqt },
+      { ticker: "VTI", value: 1, fund: vti },
     ]);
-    expect(overlapMatrix.tickers).toEqual(["XEQT", "VEQT"]);
+    expect(overlapMatrix.tickers).toEqual(["XEQT", "VTI"]);
     expect(overlapMatrix.values[0][0]).toBe(1);
     expect(overlapMatrix.values[0][1]).toBe(overlapMatrix.values[1][0]);
   });

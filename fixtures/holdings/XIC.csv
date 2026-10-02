@@ -1,31 +1,44 @@
-iShares Core S&P/TSX Capped Composite Index ETF
 Fund Holdings as of,"Sep 30, 2026"
-Inception Date,"Jan 20, 2004"
-Shares Outstanding,"1,234,567,890.00"
-Stock,-
-Bond,-
-Cash,-
-Other,-
  
 Ticker,Name,Sector,Asset Class,Market Value,Weight (%),Notional Value,Shares,Price,Location,Exchange,Currency,FX Rate,Market Currency
-RY,ROYAL BANK OF CANADA,Financials,Equity,"925,400,000.00",6.61,"925,400,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-SHOP,SHOPIFY SUBORDINATE VOTING INC CLA,Information Technology,Equity,"641,200,000.00",4.58,"641,200,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-TD,TORONTO DOMINION,Financials,Equity,"628,600,000.00",4.49,"628,600,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-ENB,ENBRIDGE INC,Energy,Equity,"506,800,000.00",3.62,"506,800,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-BN,BROOKFIELD CORP CLASS A,Financials,Equity,"421,400,000.00",3.01,"421,400,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-CNQ,CANADIAN NATURAL RESOURCES LTD,Energy,Equity,"368,200,000.00",2.63,"368,200,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-BMO,BANK OF MONTREAL,Financials,Equity,"365,400,000.00",2.61,"365,400,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-CP,CANADIAN PACIFIC KANSAS CITY LTD,Industrials,Equity,"347,200,000.00",2.48,"347,200,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-BNS,BANK OF NOVA SCOTIA,Financials,Equity,"338,800,000.00",2.42,"338,800,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-CNR,CANADIAN NATIONAL RAILWAY,Industrials,Equity,"331,800,000.00",2.37,"331,800,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-CM,CANADIAN IMPERIAL BANK OF COMMERCE,Financials,Equity,"323,400,000.00",2.31,"323,400,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-TRI,THOMSON REUTERS CORP,Industrials,Equity,"254,800,000.00",1.82,"254,800,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-CSU,CONSTELLATION SOFTWARE INC,Information Technology,Equity,"250,600,000.00",1.79,"250,600,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-MFC,MANULIFE FINANCIAL CORP,Financials,Equity,"239,400,000.00",1.71,"239,400,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-ATD,ALIMENTATION COUCHE TARD INC,Consumer Staples,Equity,"221,200,000.00",1.58,"221,200,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-SU,SUNCOR ENERGY INC,Energy,Equity,"212,800,000.00",1.52,"212,800,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-AEM,AGNICO EAGLE MINES LTD,Materials,Equity,"208,600,000.00",1.49,"208,600,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-WCN,WASTE CONNECTIONS INC,Industrials,Equity,"169,400,000.00",1.21,"169,400,000.00","1,000.00",100.00,Canada,Toronto Stock Exchange,CAD,1.00,CAD
-CAD,CAD CASH,Cash and/or Derivatives,Cash,"15,400,000.00",0.11,"15,400,000.00","1,000.00",100.00,Canada,-,CAD,1.00,CAD
+"RY","ROYAL BANK OF CANADA","Financials","Equity","2,690,270,989.80","7.73","2,690,270,989.80","9,610,170.00","279.94","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"TD","TORONTO DOMINION","Financials","Equity","1,907,526,024.05","5.48","1,907,526,024.05","11,399,785.00","167.33","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"SHOP","SHOPIFY SUBORDINATE VOTING CLASS A","Information Technology","Equity","1,766,921,976.88","5.07","1,766,921,976.88","8,377,214.00","210.92","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"BMO","BANK OF MONTREAL","Financials","Equity","1,155,196,808.60","3.32","1,155,196,808.60","4,854,380.00","237.97","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"BNS","BANK OF NOVA SCOTIA","Financials","Equity","1,093,160,175.42","3.14","1,093,160,175.42","8,447,262.00","129.41","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"ENB","ENBRIDGE","Energy","Equity","1,018,335,591.00","2.92","1,018,335,591.00","15,394,340.00","66.15","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"CM","CANADIAN IMPERIAL BANK OF COMMERCE","Financials","Equity","991,567,077.62","2.85","991,567,077.62","6,326,594.00","156.73","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"CNQ","CANADIAN NATURAL RESOURCES LTD","Energy","Equity","956,693,872.71","2.75","956,693,872.71","14,293,947.00","66.93","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"AEM","AGNICO EAGLE MINES","Materials","Equity","915,536,011.00","2.63","915,536,011.00","3,513,185.00","260.60","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"SU","SUNCOR ENERGY INC","Energy","Equity","782,265,959.50","2.25","782,265,959.50","8,106,383.00","96.50","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"BN","BROOKFIELD CLASS A","Financials","Equity","769,224,705.92","2.21","769,224,705.92","14,815,576.00","51.92","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"CP","CANADIAN PACIFIC KANSAS CITY","Industrials","Equity","737,842,572.00","2.12","737,842,572.00","6,087,810.00","121.20","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"MFC","MANULIFE FINANCIAL","Financials","Equity","698,465,224.64","2.01","698,465,224.64","11,518,226.00","60.64","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"ABX","BARRICK MINING","Materials","Equity","660,134,837.61","1.90","660,134,837.61","11,407,203.00","57.87","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"CNR","CANADIAN NATIONAL RAILWAY","Industrials","Equity","645,421,623.00","1.85","645,421,623.00","3,810,045.00","169.40","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"WPM","WHEATON PRECIOUS METALS","Materials","Equity","598,212,022.80","1.72","598,212,022.80","3,147,656.00","190.05","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"TRP","TC ENERGY","Energy","Equity","595,003,360.49","1.71","595,003,360.49","7,221,791.00","82.39","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"NA","NATIONAL BANK OF CANADA","Financials","Equity","540,357,703.09","1.55","540,357,703.09","2,660,419.00","203.11","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"FNV","FRANCO NEVADA","Materials","Equity","452,879,042.00","1.30","452,879,042.00","1,336,715.00","338.80","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"CLS","CELESTICA","Information Technology","Equity","450,076,084.05","1.29","450,076,084.05","874,019.00","514.95","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"SLF","SUN LIFE FINANCIAL INC","Financials","Equity","428,462,219.68","1.23","428,462,219.68","3,862,804.00","110.92","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"CSU","CONSTELLATION SOFTWARE","Information Technology","Equity","425,053,469.01","1.22","425,053,469.01","146,837.00","2,894.73","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"CVE","CENOVUS ENERGY","Energy","Equity","402,613,419.60","1.16","402,613,419.60","9,100,665.00","44.24","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"ATD","ALIMENTATION COUCHE TARD INC","Consumer Staples","Equity","399,404,847.24","1.15","399,404,847.24","5,154,276.00","77.49","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"WCN","WASTE CONNECTIONS","Industrials","Equity","381,966,199.08","1.10","381,966,199.08","1,743,501.00","219.08","United States","Toronto Stock Exchange","CAD","1.00","CAD"
+"CCO","CAMECO","Energy","Equity","372,427,218.44","1.07","372,427,218.44","3,018,538.00","123.38","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"DOL","DOLLARAMA","Consumer Discretionary","Equity","343,621,840.00","0.99","343,621,840.00","1,867,510.00","184.00","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"NTR","NUTRIEN LTD","Materials","Equity","331,328,983.26","0.95","331,328,983.26","3,315,279.00","99.94","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"POW","POWER CORPORATION OF CANADA","Financials","Equity","325,270,107.24","0.93","325,270,107.24","3,612,908.00","90.03","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"TECK.B","TECK RESOURCES SUBORDINATE VOTING","Materials","Equity","313,643,134.40","0.90","313,643,134.40","3,347,312.00","93.70","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"IFC","INTACT FINANCIAL CORP","Financials","Equity","300,236,770.96","0.86","300,236,770.96","1,221,269.00","245.84","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"FFH","FAIRFAX FINANCIAL HOLDINGS SUB VOT","Financials","Equity","295,598,763.54","0.85","295,598,763.54","133,209.00","2,219.06","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"K","KINROSS GOLD","Materials","Equity","281,998,204.60","0.81","281,998,204.60","8,221,522.00","34.30","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"FTS","FORTIS","Utilities","Equity","266,150,434.99","0.76","266,150,434.99","3,540,647.00","75.17","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"PPL","PEMBINA PIPELINE","Energy","Equity","256,038,860.12","0.74","256,038,860.12","4,030,204.00","63.53","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"QSR","RESTAURANTS BRANDS INTERNATIONAL","Consumer Discretionary","Equity","245,101,553.06","0.70","245,101,553.06","2,420,278.00","101.27","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"L","LOBLAW COMPANIES LTD","Consumer Staples","Equity","234,345,777.40","0.67","234,345,777.40","3,767,617.00","62.20","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"BBD.B","BOMBARDIER CLASS B","Industrials","Equity","189,943,126.75","0.55","189,943,126.75","603,473.00","314.75","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"BCE","BCE INC","Communication","Equity","187,233,834.25","0.54","187,233,834.25","6,463,025.00","28.97","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
+"PAAS","PAN AMERICAN SILVER","Materials","Equity","187,137,573.48","0.54","187,137,573.48","2,890,602.00","64.74","Canada","Toronto Stock Exchange","CAD","1.00","CAD"
  
-"The content contained herein is owned or licensed by BlackRock and/or its third-party information providers and is protected by applicable copyrights, trademarks, service marks, and/or other intellectual property rights."
