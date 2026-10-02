@@ -3,7 +3,7 @@
 A Bloomberg-style terminal for looking *through* your ETFs to the companies you actually own.
 
 - **X-ray a fund** (`XEQT <GO>`): every underlying security, expanding funds of funds (XEQT → XTOT, ITOT, XIC, XEF, XEC → stocks), with a treemap, sector and country breakdowns, and a "held via" path for each name.
-- **Overlap** (`ITOT VTI OVLP <GO>`): weighted overlap, shared holdings with both weights, and what is unique to each fund.
+- **Overlap** (`XEQT VEQT OVLP <GO>`): weighted overlap, shared holdings with both weights, and what is unique to each fund.
 - **Portfolio** (`PORT <GO>`): enter units or market values to see your total exposure to each company across every fund and stock you hold, plus a fund-overlap matrix. Saved on this computer.
 
 ## Data sources
@@ -11,11 +11,14 @@ A Bloomberg-style terminal for looking *through* your ETFs to the companies you 
 | Source | Covers | Notes |
 | --- | --- | --- |
 | BlackRock Canada / iShares US holdings CSVs | iShares funds (XEQT, XIC, ITOT, IVV…) | Daily. Product pages are discovered from the iShares screeners when not listed in `lib/sources/registry.ts`. Weights are derived from exact market values because the published weight column is rounded to 0.01%. |
-| SEC EDGAR N-PORT | Any US-registered fund (VTI, VOO, SCHD, QQQ…) | Quarterly, public ~60 days after quarter end. SPY, a unit trust, files none. |
-| Financial Modeling Prep (optional) | Fallback for everything else (Vanguard Canada such as VEQT, BMO, SPY) | Paid; set `FMP_API_KEY`. |
+| Vanguard Canada | Vanguard Canada ETFs (VEQT, VGRO, VFV, VCN, VIU, VEE…) | Month-end holdings from the GraphQL service behind vanguard.ca (undocumented, so it may change). VUN, VFV and VEE hold US funds (VTI, VOO, VWO), which are looked through via SEC filings. |
+| SEC EDGAR N-PORT | Any US-registered fund (VTI, VOO, SCHD, QQQ…) | Quarterly, public ~60 days after quarter end. SPY, a unit trust, files none. Cash collateral from securities lending is left out. |
+| Financial Modeling Prep (optional) | Fallback for everything else (BMO, SPY) | Paid; set `FMP_API_KEY`. |
 | Yahoo Finance chart endpoint | Prices and CAD/USD for positions entered as units | Unofficial; falls back to FMP when a key is set. |
 
-Securities are matched across sources by ISIN, CUSIP, ticker + country, then a normalised name plus share class (`lib/identity.ts`). N-PORT rows rarely carry tickers, so names do most of the work: on live data, 97.5% of ITOT's weight matches VTI's filing.
+Securities are matched across sources by ISIN, CUSIP, ticker + country, then a normalised name plus share class (`lib/identity.ts`). Tickers only conflict within one issuer's convention (iShares lists DBS as `D05`, Vanguard as `DBS`). N-PORT rows rarely carry tickers, so names do most of the work. On live data, 98.0% of ITOT's weight matches VTI's filing, and XEQT vs VEQT matches 97.2% of XEQT (84.8% overlap; most of the rest is genuine index differences).
+
+SEC filings carry neither tickers nor sectors, so those rows borrow them from the matching row in iShares' broad funds (ITOT for US stocks, IEFA and IEMG elsewhere). On VEQT this cuts the unclassified share from 52% to under 3%.
 
 BlackRock Canada files for funds of funds also publish BlackRock's own look-through. The ETF page compares ours against it: for XEQT, all of BlackRock's 500 largest names match to within 0.004 percentage points.
 
@@ -37,7 +40,7 @@ pnpm app
 ### Your data
 
 - `data/portfolio.json`: your saved portfolio.
-- `data/cache/`: downloaded fund holdings (kept 12 to 24 hours), so restarts are fast.
+- `data/cache/`: downloaded fund holdings (kept 12 to 24 hours), so restarts are fast. The **↻ Refresh data** button on fund, overlap and portfolio pages fetches the latest for those funds (and the funds they hold) right away.
 
 Delete `data/` to start fresh. Set `STOCKWISE_DATA_DIR` to keep it elsewhere.
 

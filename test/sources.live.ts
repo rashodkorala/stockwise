@@ -81,3 +81,33 @@ describe("Discovery and quotes", () => {
     expect(fx).toBeLessThan(2);
   });
 });
+
+describe("Vanguard Canada", () => {
+  let veqt: LookThrough;
+  beforeAll(async () => {
+    veqt = (await lookThrough("VEQT", getFundHoldings))!;
+  });
+
+  it("looks VEQT through to stocks via VUN > VTI and VEE > VWO", () => {
+    expect(veqt.funds.filter((f) => f.error)).toEqual([]);
+    expect(new Set(veqt.funds.map((f) => f.ticker))).toEqual(new Set(["VEQT", "VUN", "VTI", "VCN", "VIU", "VEE", "VWO"]));
+    const total = veqt.exposures.reduce((s, e) => s + e.weight, 0);
+    console.log(`VEQT: ${veqt.exposures.length} securities, total weight ${(total * 100).toFixed(2)}%, as of ${veqt.asOf}`);
+    expect(total).toBeGreaterThan(0.98);
+    expect(total).toBeLessThan(1.02);
+    expect(daysAgo(veqt.asOf)).toBeLessThan(45); // month-end holdings
+  });
+
+  it("overlaps heavily with XEQT", async () => {
+    const o = computeOverlap((await lookThrough("XEQT", getFundHoldings))!, veqt);
+    console.log(`XEQT vs VEQT: overlap ${(o.overlap * 100).toFixed(1)}%, XEQT matched ${(o.aInB * 100).toFixed(1)}%, VEQT matched ${(o.bInA * 100).toFixed(1)}%`);
+    expect(o.overlap).toBeGreaterThan(0.8);
+    expect(o.aInB).toBeGreaterThan(0.95);
+  });
+
+  it("loads a balanced portfolio with bond funds (VGRO)", async () => {
+    const lt = (await lookThrough("VGRO", getFundHoldings))!;
+    expect(lt.funds.filter((f) => f.error)).toEqual([]);
+    expect(lt.exposures.some((e) => e.assetClass === "fixed_income")).toBe(true);
+  });
+});

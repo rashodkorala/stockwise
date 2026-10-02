@@ -32,6 +32,7 @@ export function mapFmpHoldings(rows: FmpHolding[], ticker: string, isKnownFund: 
     const isFund = t ? isKnownFund(t) || /\bETF\b/i.test(r.name ?? "") : false;
     return {
       ticker: t,
+      tickerScheme: "fmp",
       name: r.name ?? t ?? "Unknown",
       isin: r.isin || undefined,
       cusip: r.securityCusip || r.cusip || undefined,

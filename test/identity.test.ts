@@ -14,6 +14,15 @@ describe("splitName", () => {
     expect(splitName("ALPHABET INC-A")).toEqual({ base: "ALPHABET", shareClass: "A" });
     expect(splitName("Alphabet Inc - Class C")).toEqual({ base: "ALPHABET", shareClass: "C" });
     expect(splitName("BERKSHIRE HATH-B").shareClass).toBe("B");
+    expect(splitName("CHINA CONSTRUCTION BANK CORP H")).toEqual({ base: "CHINACONSTRUCTIONBANK", shareClass: "H" });
+    expect(splitName("CCB-H")).toEqual({ base: "CCB", shareClass: "H" });
+  });
+
+  it("does not mistake listing markers or title fragments for share classes", () => {
+    expect(splitName("BABA-W").shareClass).toBe("");
+    expect(splitName("AMERICAN TOWER C", { trailingClass: false }).shareClass).toBe("");
+    // Long iShares names are truncated, so a final "I" is half of "INC".
+    expect(splitName("ROGERS COMMUNICATIONS NON-VOTING I").shareClass).toBe("");
   });
   it("folds the spelling differences seen between iShares and N-PORT", () => {
     expect(splitName("ELI LILLY").base).toBe(splitName("Eli Lilly & Co").base);
@@ -21,6 +30,7 @@ describe("splitName", () => {
     expect(splitName("APPLIED MATERIAL INC").base).toBe(splitName("Applied Materials Inc").base);
     expect(splitName("TJX COS INC/THE").base).toBe(splitName("TJX COS INC").base);
     expect(splitName("MCDONALDS CORP").base).toBe(splitName("McDonald's Corp").base);
+    expect(splitName("NORDEA BANK").base).toBe(splitName("Nordea Bank Abp").base);
   });
 });
 
@@ -60,6 +70,34 @@ describe("resolveEntities", () => {
       h({ name: "Lilly (Eli) Co", cusip: "532457108", country: "US" }),
     ]);
     expect(new Set(g).size).toBe(1);
+  });
+
+  it("matches across issuers whose ticker conventions differ", () => {
+    // iShares lists DBS Group as D05, Vanguard as DBS: different schemes, so the tickers do not conflict.
+    expect(
+      same(
+        { ticker: "D05", tickerScheme: "blackrock", name: "DBS GROUP HOLDINGS LTD", country: "SG" },
+        { ticker: "DBS", tickerScheme: "vanguard", name: "DBS Group Holdings Ltd", country: "SG" },
+      ),
+    ).toBe(true);
+    // Hong Kong and China labels for the same company.
+    expect(
+      same(
+        { ticker: "9988", tickerScheme: "blackrock", name: "ALIBABA GROUP HOLDING", country: "CN" },
+        { name: "Alibaba Group Holding Ltd", altName: "BABA-W", isin: "KYG017191142", country: "HK" },
+      ),
+    ).toBe(true);
+    // A name iShares cut off mid-word.
+    expect(same({ ticker: "SPCX", name: "SPACE EXPLORATION TECHNOLOGIES COR", country: "US" }, nport("Space Exploration Technologies Corp", "SPACE EXPLORAT-A", "84612A102"))).toBe(true);
+  });
+
+  it("still keeps different tickers apart within one issuer's scheme", () => {
+    expect(
+      same(
+        { ticker: "IBCP", tickerScheme: "blackrock", name: "INDEPENDENT BANK", country: "US" },
+        { ticker: "INDB", tickerScheme: "blackrock", name: "INDEPENDENT BANK", country: "US" },
+      ),
+    ).toBe(false);
   });
 
   it("never merges different tickers that share a name, or one ticker across countries", () => {

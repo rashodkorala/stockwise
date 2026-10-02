@@ -9,6 +9,8 @@ export type AssetClass =
 /** One row of a fund's holdings file, normalised across sources. */
 export interface Holding {
   ticker?: string;
+  /** Whose ticker convention `ticker` follows (e.g. "blackrock", "vanguard"); tickers only conflict within one scheme. */
+  tickerScheme?: string;
   name: string;
   /** A second name used only for matching, such as an N-PORT filing's abbreviated title. */
   altName?: string;
@@ -25,7 +27,7 @@ export interface Holding {
   isFund: boolean;
 }
 
-export type SourceId = "ishares-us" | "ishares-ca" | "edgar-nport" | "fmp" | "sample";
+export type SourceId = "ishares-us" | "ishares-ca" | "vanguard-ca" | "edgar-nport" | "fmp" | "sample";
 
 export interface FundHoldings {
   ticker: string;

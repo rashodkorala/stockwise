@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { mkdir, open, readdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { dataDir } from "./paths";
 
@@ -59,4 +59,44 @@ export function diskCached<T>(key: string, ttlMs: number, load: () => Promise<T>
     }
     return value;
   });
+}
+
+/**
+ * Drops every cached entry whose key matches, in memory and in data/cache/, so
+ * the next request refetches it. Disk entries are identified by the key stored
+ * at the start of each file. Returns how many entries were dropped.
+ */
+export async function invalidate(match: (key: string) => boolean): Promise<number> {
+  let dropped = 0;
+  for (const key of Array.from(store.keys())) {
+    if (match(key)) {
+      store.delete(key);
+      dropped++;
+    }
+  }
+  const dir = path.join(dataDir(), "cache");
+  let files: string[];
+  try {
+    files = (await readdir(dir)).filter((f) => f.endsWith(".json"));
+  } catch {
+    return dropped;
+  }
+  await Promise.all(
+    files.map(async (f) => {
+      const file = path.join(dir, f);
+      try {
+        const handle = await open(file, "r");
+        const { buffer, bytesRead } = await handle.read(Buffer.alloc(512), 0, 512, 0);
+        await handle.close();
+        const raw = buffer.subarray(0, bytesRead).toString("utf8").match(/^\{"key":("(?:[^"\\]|\\.)*")/)?.[1];
+        if (raw && match(JSON.parse(raw) as string)) {
+          await rm(file, { force: true });
+          dropped++;
+        }
+      } catch {
+        // Unreadable file: leave it; diskCached ignores corrupt entries anyway.
+      }
+    }),
+  );
+  return dropped;
 }
