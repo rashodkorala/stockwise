@@ -1,0 +1,9 @@
+{
+  "_note": "Hand-made from the documented field list (massive.com/docs/rest/partners/etf-global/constituents); replace with a real snapshot once a key with the ETF Global add-on is available.",
+  "results": [
+    { "composite_ticker": "VTI", "constituent_ticker": "NVDA", "constituent_name": "NVIDIA CORP", "asset_class": "Equity", "security_type": "Common Stock", "country_of_exchange": "US", "currency_traded": "USD", "effective_date": "2026-09-30", "figi": "BBG000BBJQV0", "isin": "US67066G1040", "sedol": "2379504", "us_code": "67066G104", "market_value": 120000000000, "shares_held": 640000000, "weight": 6.35 },
+    { "composite_ticker": "VTI", "constituent_ticker": "AAPL", "constituent_name": "APPLE INC", "asset_class": "Equity", "security_type": "Common Stock", "country_of_exchange": "US", "currency_traded": "USD", "effective_date": "2026-09-30", "figi": "BBG000B9XRY4", "isin": "US0378331005", "sedol": "2046251", "us_code": "037833100", "market_value": 110000000000, "shares_held": 430000000, "weight": 5.87 },
+    { "composite_ticker": "VTI", "constituent_ticker": "GOOGL", "constituent_name": "ALPHABET INC-CL A", "asset_class": "Equity", "security_type": "Common Stock", "country_of_exchange": "US", "currency_traded": "USD", "effective_date": "2026-09-30", "figi": null, "isin": "US02079K3059", "sedol": null, "us_code": "02079K305", "market_value": 55000000000, "shares_held": 220000000, "weight": 2.9 },
+    { "composite_ticker": "VTI", "constituent_ticker": "VMFXX", "constituent_name": "VANGUARD MARKET LIQUIDITY FUND", "asset_class": "Cash", "security_type": "Money Market", "country_of_exchange": "US", "currency_traded": "USD", "effective_date": "2026-09-30", "figi": null, "isin": null, "sedol": null, "us_code": null, "market_value": 5000000000, "shares_held": 5000000000, "weight": 0.27 }
+  ]
+}

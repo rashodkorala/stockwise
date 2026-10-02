@@ -27,7 +27,7 @@ export interface Holding {
   isFund: boolean;
 }
 
-export type SourceId = "ishares-us" | "ishares-ca" | "vanguard-ca" | "edgar-nport" | "fmp" | "sample";
+export type SourceId = "massive-etf" | "ishares-us" | "ishares-ca" | "vanguard-ca" | "edgar-nport" | "fmp" | "sample";
 
 export interface FundHoldings {
   ticker: string;

@@ -5,7 +5,8 @@ import { computeOverlap, type Overlap, type OverlapRow } from "./analytics/overl
 import { computePortfolioExposure } from "./analytics/portfolio";
 import { cached, HOUR, invalidate } from "./cache";
 import { normaliseCountry } from "./identity";
-import { getFxRate, getQuote } from "./quotes";
+import { getFxRate, getQuote, type Quote } from "./quotes";
+import { massiveCompanyDetails, massiveEnabled, type CompanyDetails } from "./sources/massive";
 import { withEnrichment } from "./sources/enrich";
 import { getFundHoldings, resolveSymbol } from "./sources/resolve";
 import type { Holding, SourceAttempt } from "./types";
@@ -39,7 +40,7 @@ export async function loadLookThrough(symbol: string): Promise<Loaded<LookThroug
 
 // Cache keys that hold one fund's data carry its ticker as a segment:
 // ishares:ca:XEQT, vanguard-ca:VEQT, nport:VTI, fmp:VEQT:CA, lt:XEQT:CA, enriched:…:VTI:….
-const FUND_KEY_PREFIXES = new Set(["ishares", "vanguard-ca", "nport", "fmp", "lt", "enriched"]);
+const FUND_KEY_PREFIXES = new Set(["ishares", "vanguard-ca", "massive-etf", "nport", "fmp", "lt", "enriched"]);
 const MIN_REFRESH_GAP_MS = 30_000;
 const lastRefreshed = new Map<string, number>();
 
@@ -65,6 +66,8 @@ export async function refreshData(symbols: string[]): Promise<{ tickers: string[
     const [prefix, ...rest] = key.split(":");
     if (prefix === "quote") return wanted.has(rest.join(":").replace(/\.TO$/, ""));
     if (prefix === "fx") return true;
+    // Massive's end-of-day closes for every US ticker come in one request; refetch it too.
+    if (prefix === "massive" && rest[0] === "grouped") return true;
     return FUND_KEY_PREFIXES.has(prefix) && rest.some((segment) => wanted.has(segment));
   });
   return { tickers: due, dropped };
@@ -216,6 +219,9 @@ export interface PortfolioView {
     value: number;
     price?: number;
     priceCurrency?: string;
+    /** Trading day of the price, when the source reports it (Massive end-of-day). */
+    priceAsOf?: string;
+    priceSource?: Quote["source"];
     error?: string;
   }[];
   exposures: (ExposureRow & { value: number })[];
@@ -234,10 +240,14 @@ export async function loadPortfolio(inputs: PositionInput[], baseCurrency: "CAD"
         let value: number;
         let price: number | undefined;
         let priceCurrency: string | undefined;
+        let priceAsOf: string | undefined;
+        let priceSource: Quote["source"];
         if (p.units != null && p.units > 0) {
           const q = await getQuote(sym.ticker, sym.country);
           price = q.price;
           priceCurrency = q.currency;
+          priceAsOf = q.asOf;
+          priceSource = q.source;
           value = p.units * q.price * (await getFxRate(q.currency, baseCurrency));
         } else if (p.marketValue != null && p.marketValue > 0) {
           const ccy = p.currency || (sym.country === "CA" ? "CAD" : "USD");
@@ -247,16 +257,21 @@ export async function loadPortfolio(inputs: PositionInput[], baseCurrency: "CAD"
         }
 
         const lt = await loadLookThrough(p.ticker);
-        if (lt.ok) return { ticker: label, value, price, priceCurrency, fund: lt.data, name: lt.data.name };
+        const priced = { ticker: label, value, price, priceCurrency, priceAsOf, priceSource };
+        if (lt.ok) return { ...priced, fund: lt.data, name: lt.data.name };
+        // A single stock: Massive's ticker overview supplies its name and sector (US listings).
+        let details: CompanyDetails | undefined;
+        if (massiveEnabled() && sym.country === "US") details = await massiveCompanyDetails(sym.ticker).catch(() => undefined);
         const security: Holding = {
           ticker: sym.ticker,
-          name: sym.ticker,
+          name: details?.name ?? sym.ticker,
           country: normaliseCountry(sym.country),
+          sector: details?.sector,
           assetClass: "equity",
           weight: 1,
           isFund: false,
         };
-        return { ticker: label, value, price, priceCurrency, security, name: sym.ticker };
+        return { ...priced, security, name: security.name };
       } catch (err) {
         return { ticker: label, value: 0, name: sym.ticker, error: (err as Error).message };
       }
@@ -276,6 +291,8 @@ export async function loadPortfolio(inputs: PositionInput[], baseCurrency: "CAD"
       value: p.value,
       price: "price" in p ? p.price : undefined,
       priceCurrency: "priceCurrency" in p ? p.priceCurrency : undefined,
+      priceAsOf: "priceAsOf" in p ? p.priceAsOf : undefined,
+      priceSource: "priceSource" in p ? p.priceSource : undefined,
       error: "error" in p ? p.error : undefined,
     })),
     exposures: result.exposures.slice(0, 500).map((e) => ({ ...toRow(e), value: e.value })),

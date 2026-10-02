@@ -4,11 +4,15 @@ import { cached, HOUR } from "./cache";
 import { fetchJson, HttpError } from "./http";
 import { fixturesEnabled } from "./sources/fixtures";
 import { fmpEnabled, fmpSymbol } from "./sources/fmp";
+import { massiveEnabled, massiveFxRate, massiveQuote } from "./sources/massive";
 
 export interface Quote {
   symbol: string;
   price: number;
   currency: string;
+  /** Trading day the price is from, when the source says (Massive end-of-day prices). */
+  asOf?: string;
+  source?: "massive" | "yahoo" | "fmp" | "sample";
 }
 
 interface YahooChart {
@@ -28,7 +32,7 @@ async function yahooQuote(symbol: string): Promise<Quote> {
   }
   const meta = data.chart?.result?.[0]?.meta;
   if (!meta?.regularMarketPrice) throw new Error(`No price for ${symbol}`);
-  return { symbol, price: meta.regularMarketPrice, currency: meta.currency ?? "USD" };
+  return { symbol, price: meta.regularMarketPrice, currency: meta.currency ?? "USD", source: "yahoo" };
 }
 
 async function fmpQuote(symbol: string): Promise<Quote> {
@@ -36,7 +40,7 @@ async function fmpQuote(symbol: string): Promise<Quote> {
     `https://financialmodelingprep.com/stable/quote?symbol=${encodeURIComponent(symbol)}&apikey=${process.env.FMP_API_KEY}`,
   );
   if (!rows[0]?.price) throw new Error(`No price for ${symbol}`);
-  return { symbol, price: rows[0].price, currency: rows[0].currency ?? (symbol.endsWith(".TO") ? "CAD" : "USD") };
+  return { symbol, price: rows[0].price, currency: rows[0].currency ?? (symbol.endsWith(".TO") ? "CAD" : "USD"), source: "fmp" };
 }
 
 async function fixtureQuote(symbol: string): Promise<Quote> {
@@ -46,14 +50,25 @@ async function fixtureQuote(symbol: string): Promise<Quote> {
   >;
   const q = all[symbol];
   if (!q) throw new Error(`No sample price for ${symbol}`);
-  return { symbol, ...q };
+  return { symbol, ...q, source: "sample" };
 }
 
-/** Latest price for a ticker; Canadian listings take the ".TO" suffix. */
+/**
+ * Latest price for a ticker; Canadian listings take the ".TO" suffix. US
+ * tickers come from Massive first when MASSIVE_API_KEY is set (end-of-day on
+ * its free plan), then Yahoo, then FMP. Massive covers US markets only.
+ */
 export function getQuote(ticker: string, country: "US" | "CA"): Promise<Quote> {
   const symbol = fmpSymbol(ticker, country);
   return cached(`quote:${symbol}`, HOUR / 4, async () => {
     if (fixturesEnabled()) return fixtureQuote(symbol);
+    if (country === "US" && massiveEnabled()) {
+      try {
+        return { symbol, ...(await massiveQuote(ticker)), source: "massive" };
+      } catch {
+        // Not in plan, rate-limited or unknown ticker: use the free sources.
+      }
+    }
     try {
       return await yahooQuote(symbol);
     } catch (err) {
@@ -69,6 +84,13 @@ export async function getFxRate(from: string, to: string): Promise<number> {
   const symbol = `${from}${to}=X`;
   return cached(`fx:${symbol}`, HOUR, async () => {
     if (fixturesEnabled()) return (await fixtureQuote(symbol)).price;
+    if (massiveEnabled()) {
+      try {
+        return await massiveFxRate(from, to);
+      } catch {
+        // Currencies are a separate Massive plan; fall back to Yahoo.
+      }
+    }
     try {
       return (await yahooQuote(symbol)).price;
     } catch (err) {

@@ -13,8 +13,9 @@ A Bloomberg-style terminal for looking *through* your ETFs to the companies you 
 | BlackRock Canada / iShares US holdings CSVs | iShares funds (XEQT, XIC, ITOT, IVV…) | Daily. Product pages are discovered from the iShares screeners when not listed in `lib/sources/registry.ts`. Weights are derived from exact market values because the published weight column is rounded to 0.01%. |
 | Vanguard Canada | Vanguard Canada ETFs (VEQT, VGRO, VFV, VCN, VIU, VEE…) | Month-end holdings from the GraphQL service behind vanguard.ca (undocumented, so it may change). VUN, VFV and VEE hold US funds (VTI, VOO, VWO), which are looked through via SEC filings. |
 | SEC EDGAR N-PORT | Any US-registered fund (VTI, VOO, SCHD, QQQ…) | Quarterly, public ~60 days after quarter end. SPY, a unit trust, files none. Cash collateral from securities lending is left out. |
+| Massive (optional) | US prices, company names and sectors; daily US ETF holdings and USD/CAD on plans that include them | Set `MASSIVE_API_KEY`. The free plan gives end-of-day prices (one request prices every US ticker) and ticker details at 5 requests a minute; features outside the plan are detected once and skipped for a day. US markets only. |
 | Financial Modeling Prep (optional) | Fallback for everything else (BMO, SPY) | Paid; set `FMP_API_KEY`. |
-| Yahoo Finance chart endpoint | Prices and CAD/USD for positions entered as units | Unofficial; falls back to FMP when a key is set. |
+| Yahoo Finance chart endpoint | Prices and CAD/USD for positions entered as units | Unofficial. Used for TSX listings, and for US tickers when Massive is not set up. |
 
 Securities are matched across sources by ISIN, CUSIP, ticker + country, then a normalised name plus share class (`lib/identity.ts`). Tickers only conflict within one issuer's convention (iShares lists DBS as `D05`, Vanguard as `DBS`). N-PORT rows rarely carry tickers, so names do most of the work. On live data, 98.0% of ITOT's weight matches VTI's filing, and XEQT vs VEQT matches 97.2% of XEQT (84.8% overlap; most of the rest is genuine index differences).
 
@@ -59,7 +60,7 @@ pnpm exec tsc --noEmit
 
 ## Layout
 
-- `lib/sources/`: holdings providers (iShares, N-PORT, FMP, sample) and `resolve.ts`, which tries them in order and reports each failure.
+- `lib/sources/`: holdings providers (iShares, Vanguard Canada, Massive, N-PORT, FMP, sample) and `resolve.ts`, which tries them in order and reports each failure.
 - `lib/analytics/`: pure look-through, overlap, and portfolio functions.
 - `lib/service.ts`: server-side orchestration and the compact views sent to pages.
 - `app/`: pages (`/etf/[ticker]`, `/compare`, `/portfolio`) and JSON APIs (`/api/etf/[ticker]`, `/api/overlap`, `/api/portfolio`).

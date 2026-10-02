@@ -4,6 +4,7 @@ import { fixturesEnabled, loadFixtureHoldings } from "./fixtures";
 import { fetchFmpHoldings, fmpEnabled } from "./fmp";
 import { fetchIsharesHoldings } from "./ishares";
 import { lookupRegistry, parseSymbol } from "./registry";
+import { fetchMassiveEtfHoldings, massiveEnabled } from "./massive";
 import { fetchVanguardHoldings } from "./vanguard";
 
 export const isKnownFund = (ticker: string) => lookupRegistry(ticker) !== undefined;
@@ -26,6 +27,8 @@ export function resolveSymbol(input: string): ResolvedSymbol {
       : country === "CA"
         ? ["ishares-ca", "vanguard-ca"]
         : ["ishares-us", "edgar-nport"];
+  // Daily holdings for US-listed ETFs, when the key's plan includes ETF Global.
+  if (!fixturesEnabled() && massiveEnabled() && country === "US") sources.unshift("massive-etf");
   if (!fixturesEnabled() && fmpEnabled()) sources.push("fmp");
   return { ticker: parsed.ticker, country, name: entry?.name, sources };
 }
@@ -39,6 +42,8 @@ function load(source: SourceId, sym: ResolvedSymbol): Promise<FundHoldings> {
       return fetchIsharesHoldings("us", sym.ticker, entry?.ishares, isKnownFund);
     case "ishares-ca":
       return fetchIsharesHoldings("ca", sym.ticker, entry?.ishares, isKnownFund);
+    case "massive-etf":
+      return fetchMassiveEtfHoldings(sym.ticker);
     case "vanguard-ca":
       return fetchVanguardHoldings(sym.ticker);
     case "edgar-nport":

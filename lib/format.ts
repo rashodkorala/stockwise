@@ -15,6 +15,7 @@ export const SOURCE_LABELS: Record<string, string> = {
   "ishares-us": "iShares (US) daily holdings",
   "ishares-ca": "BlackRock Canada daily holdings",
   "vanguard-ca": "Vanguard Canada month-end holdings",
+  "massive-etf": "ETF Global daily holdings (via Massive)",
   "edgar-nport": "SEC N-PORT quarterly filing",
   fmp: "Financial Modeling Prep",
   sample: "Sample data",
