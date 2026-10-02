@@ -40,7 +40,7 @@ pnpm app
 ### Your data
 
 - `data/portfolio.json`: your saved portfolio.
-- `data/cache/`: downloaded fund holdings (kept 12 to 24 hours), so restarts are fast.
+- `data/cache/`: downloaded fund holdings (kept 12 to 24 hours), so restarts are fast. The **↻ Refresh data** button on fund, overlap and portfolio pages fetches the latest for those funds (and the funds they hold) right away.
 
 Delete `data/` to start fresh. Set `STOCKWISE_DATA_DIR` to keep it elsewhere.
 

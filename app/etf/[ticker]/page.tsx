@@ -1,6 +1,7 @@
 import Link from "next/link";
 import BarList from "@/components/BarList";
 import HoldingsTable from "@/components/HoldingsTable";
+import RefreshButton from "@/components/RefreshButton";
 import { FundSources, LoadError } from "@/components/SourceNotice";
 import Treemap from "@/components/Treemap";
 import { pct, SOURCE_LABELS } from "@/lib/format";
@@ -38,6 +39,9 @@ export default async function EtfPage({ params }: { params: { ticker: string } }
         <span className="name">{v.name}</span>
         <span className="meta">
           as of {v.asOf} · {SOURCE_LABELS[v.source] ?? v.source}
+        </span>
+        <span style={{ marginLeft: "auto" }}>
+          <RefreshButton symbols={[symbol]} />
         </span>
       </div>
 

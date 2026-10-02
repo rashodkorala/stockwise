@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import BarList from "@/components/BarList";
 import HoldingsTable from "@/components/HoldingsTable";
 import OverlapMatrix from "@/components/OverlapMatrix";
+import RefreshButton from "@/components/RefreshButton";
 import { money, pct } from "@/lib/format";
 import type { PortfolioView } from "@/lib/service";
 import type { SavedPortfolio } from "@/lib/storage";
@@ -228,6 +229,7 @@ export default function PortfolioClient() {
             <button className="btn" onClick={analyse} disabled={valid.length === 0 || loading}>
               {loading ? "Analysing…" : "Analyse"}
             </button>
+            {view && <RefreshButton symbols={view.positions.map((p) => p.ticker)} onRefreshed={analyse} />}
             {status && (
               <span className="muted" role="status">
                 {status}

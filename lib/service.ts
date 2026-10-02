@@ -3,7 +3,7 @@ import { crossCheck, type CrossCheck } from "./analytics/crosscheck";
 import { breakdown, lookThrough, type Exposure, type FundNode, type LookThrough } from "./analytics/lookthrough";
 import { computeOverlap, type Overlap, type OverlapRow } from "./analytics/overlap";
 import { computePortfolioExposure } from "./analytics/portfolio";
-import { cached, HOUR } from "./cache";
+import { cached, HOUR, invalidate } from "./cache";
 import { normaliseCountry } from "./identity";
 import { getFxRate, getQuote } from "./quotes";
 import { withEnrichment } from "./sources/enrich";
@@ -33,6 +33,41 @@ export async function loadLookThrough(symbol: string): Promise<Loaded<LookThroug
   } catch (err) {
     return { ok: false, error: (err as Error).message, attempts: (err as { attempts?: SourceAttempt[] }).attempts ?? [] };
   }
+}
+
+/* ---------- Refresh ---------- */
+
+// Cache keys that hold one fund's data carry its ticker as a segment:
+// ishares:ca:XEQT, vanguard-ca:VEQT, nport:VTI, fmp:VEQT:CA, lt:XEQT:CA, enriched:…:VTI:….
+const FUND_KEY_PREFIXES = new Set(["ishares", "vanguard-ca", "nport", "fmp", "lt", "enriched"]);
+const MIN_REFRESH_GAP_MS = 30_000;
+const lastRefreshed = new Map<string, number>();
+
+/**
+ * Forgets the cached data for these funds and every fund they hold, plus their
+ * prices and exchange rates, so the next page load fetches it fresh. Funds
+ * refreshed in the last 30 seconds are skipped to spare the data sources.
+ */
+export async function refreshData(symbols: string[]): Promise<{ tickers: string[]; dropped: number }> {
+  const tickers = new Set<string>();
+  for (const s of symbols) {
+    tickers.add(resolveSymbol(s).ticker);
+    const lt = await loadLookThrough(s); // already cached when called from a page
+    if (lt.ok) lt.data.funds.forEach((f) => tickers.add(f.ticker));
+  }
+  const now = Date.now();
+  const due = Array.from(tickers).filter((t) => now - (lastRefreshed.get(t) ?? 0) >= MIN_REFRESH_GAP_MS);
+  due.forEach((t) => lastRefreshed.set(t, now));
+  const wanted = new Set(due);
+  if (wanted.size === 0) return { tickers: [], dropped: 0 };
+
+  const dropped = await invalidate((key) => {
+    const [prefix, ...rest] = key.split(":");
+    if (prefix === "quote") return wanted.has(rest.join(":").replace(/\.TO$/, ""));
+    if (prefix === "fx") return true;
+    return FUND_KEY_PREFIXES.has(prefix) && rest.some((segment) => wanted.has(segment));
+  });
+  return { tickers: due, dropped };
 }
 
 /* ---------- Views: compact, serialisable shapes for client components ---------- */

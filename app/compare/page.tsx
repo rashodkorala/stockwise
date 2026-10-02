@@ -1,5 +1,6 @@
 import Link from "next/link";
 import OverlapTables from "@/components/OverlapTables";
+import RefreshButton from "@/components/RefreshButton";
 import { LoadError } from "@/components/SourceNotice";
 import { pct } from "@/lib/format";
 import { loadOverlap } from "@/lib/service";
@@ -59,7 +60,8 @@ export default async function ComparePage({ searchParams }: { searchParams: { a?
         <span className="meta">
           {o.a.name} · {o.b.name}
         </span>
-        <span style={{ marginLeft: "auto" }}>
+        <span className="toolbar" style={{ marginLeft: "auto" }}>
+          <RefreshButton symbols={[a, b]} />
           <CompareForm a={a} b={b} />
         </span>
       </div>
